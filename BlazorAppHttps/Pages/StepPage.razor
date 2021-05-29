@@ -1,0 +1,176 @@
+@page "/step/{StepId:int}"
+@page "/step"
+
+@inject IJSRuntime js
+@inject NavigationManager NavigationManager
+
+@using BlazorAppHttps.Data
+@inject StepService stepService
+@inject ReportService reportService
+
+@* <div class="d-none d-md-flex nav justify-content-around bg-dark"> *@
+@* <li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="#">Active</a>
+    </li>
+    <li class="nav-item">
+    <a class="nav-link" href="#">Link</a>
+    </li>
+    <li class="nav-item">
+    <a class="nav-link" href="#">Link</a>
+    </li>
+    <li class="nav-item">
+    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+    </li> *@
+@* </div> *@
+
+@* <div class="d-none d-md-flex progress">
+    <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0"
+    aria-valuemax="100"></div>
+    </div> *@
+
+<span class="d-block step-separator-xl"></span>
+
+<div class="page-container my-5 my-md-0">
+
+    <div class="container-fluid">
+        <div class="row mx-0 mx-md-5">
+
+            <div class="d-flex col-md-6 px-2 px-md-4 align-middle">
+
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="page-title bg-dark p-4 text-white">
+                            <strong>
+                                @steps[StepId].Title
+                            </strong>
+                        </p>
+
+                        @* @foreach (var description in steps[StepId].Descriptions)
+                            {
+                            <p class="h3 mb-4">@description</p>
+                            } *@
+
+                        <span class="d-block step-separator-xl"></span>
+                        @* <Separator></Separator> *@
+
+                        @for (int i = 0; i < steps[StepId].Descriptions.Count; i++)
+                        {
+                            @* <p class="h3 mb-4">@steps[StepId].Descriptions[i]</p> *@
+                            <p class="page-description px-3">@steps[StepId].Descriptions[i]</p>
+
+                            if (i != steps[StepId].Descriptions.Count - 1)
+                            {
+                                <span class="d-block step-separator"></span>
+                                @* <span class="d-block mb-3 mb-sm-4"></span> *@
+                                @* <Separator></Separator> *@
+
+                            }
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+            <span class="d-block d-md-none mb-3 mb-sm-4 mb-md-5"></span>
+
+            <div class="d-flex col-md-6 justify-content-center align-items-center">
+                <img src="@imageSrc" class="img-fluid" style="border-radius: 2rem;" />
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public int StepId { get; set; }
+
+    private string imageSrc;
+
+    private List<Step> steps;
+
+    private DotNetObjectReference<StepPage> objectReference;
+
+    protected override void OnInitialized()
+    @* protected override async Task OnInitializedAsync() *@
+    {
+        if (reportService.Operator == null)
+        {
+            NavigationManager.NavigateTo($"/");
+        }
+        @* steps = await stepService.GetStepsAsync(); *@
+        steps = stepService.Steps;
+        if (StepId >= steps.Count || StepId < 0)
+        {
+            NavigationManager.NavigateTo("/step/0");
+        }
+        Console.WriteLine("init");
+    }
+
+    protected override void OnParametersSet()
+    {
+        Console.WriteLine("parameter set");
+        imageSrc = steps[StepId].Video;
+    }
+
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine("render");
+        if (firstRender)
+        {
+            Console.WriteLine("first render");
+            objectReference = DotNetObjectReference.Create(this);
+            await js.InvokeVoidAsync("addListener", objectReference);
+        }
+
+        if (!String.IsNullOrEmpty(steps[StepId].Audio))
+        {
+            await js.InvokeVoidAsync("playAudio", steps[StepId].Audio);
+        }
+    }
+
+    [JSInvokable]
+    public void keyboardHandler(int key)
+    {
+        int newId;
+        switch (key)
+        {
+            //case 37:
+            // newId = StepId - 1;
+            // if (newId >= 0)
+            // {
+            // reportService.UndoStep(steps[StepId].Title);
+            // NavigationManager.NavigateTo($"/step/{newId}");
+            // }
+            // break;
+            case 39:
+                reportService.LogStep(steps[StepId].Title);
+
+                newId = StepId + 1;
+                if (newId <= steps.Count - 1)
+                {
+                    NavigationManager.NavigateTo($"/step/{newId}");
+                }
+                else if (newId == steps.Count)
+                {
+                    if (reportService.Operator == null)
+                    {
+                        NavigationManager.NavigateTo($"/");
+                        break;
+                    }
+                    reportService.CompleteProtocol();
+                    NavigationManager.NavigateTo($"/report");
+                }
+
+                break;
+            default:
+                break;
+
+        }
+    }
+
+
+}

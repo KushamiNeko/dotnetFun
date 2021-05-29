@@ -1,0 +1,104 @@
+﻿@page "/"
+@namespace BlazorAppHttps.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BlazorAppHttps</title>
+    <base href="~/" />
+    @* <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" /> *@
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+    @* <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet"> *@
+
+    <link href="css/site.css" rel="stylesheet" />
+
+    <link href="BlazorAppHttps.styles.css" rel="stylesheet" />
+</head>
+
+<body>
+    <component type="typeof(App)" render-mode="ServerPrerendered" />
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            An error has occurred. This application may no longer respond until reloaded.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="_framework/blazor.server.js"></script>
+
+    @* <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+        crossorigin="anonymous"></script> *@
+
+
+    <script>
+
+        let listener = null;
+        let player = null;
+
+        window.addListener = (invoker) => {
+            if (listener !== null) {
+                return;
+            }
+
+            console.log("add global listener");
+
+
+            listener = (event) => {
+                console.log(event.which);
+                if (player !== null) {
+                    player.pause();
+                }
+
+                invoker.invokeMethodAsync("keyboardHandler", event.which);
+            }
+
+            //document.addEventListener("keydown", function (event) {
+            //    console.log(event.which);
+            //    invoker.invokeMethodAsync("Test", event.which);
+            //});
+
+            document.addEventListener("keydown", listener);
+
+        }
+
+        window.removeListener = () => {
+            if (listener !== null) {
+                console.log("remove global listener");
+                document.removeEventListener("keydown", listener);
+            }
+        }
+
+        window.playAudio = (src) => {
+            console.log(src);
+
+            player = new Audio(src);
+            player.play();
+        }
+
+       // window.stopAudio = () => {
+        //    if (player !== null) {
+        //        player.pause();
+       //     }
+        //}
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+@page "/report"
+
+@inject IJSRuntime js
+@inject NavigationManager NavigationManager
+@using BlazorAppHttps.Data
+@inject ReportService reportService
+
+<h3>作業日誌</h3>
+
+<h2>Operator: @reportService.Operator?.Name</h2>
+<h2>Protocol Begin: @reportService.Operator?.ProtocolStart.ToString(_dateTimeFormat)</h2>
+<h2>Protocol Complete: @reportService.Operator?.ProtocolEnd.ToString(_dateTimeFormat)</h2>
+<h2>Sample ID From: @reportService.Operator?.StartPlateID</h2>
+<h2>Sample ID To: @reportService.Operator?.EndPlateID</h2>
+<h2>Number of Samples: @reportService.Operator?.NumberOfSamples</h2>
+
+@foreach (var pair in reportService.Logs)
+{
+    <h4>@pair.Value.ToString(_dateTimeFormat) ..... @pair.Key</h4>
+}
+
+
+@code {
+    private readonly string _dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("init report");
+        if (reportService.Operator == null)
+        {
+            NavigationManager.NavigateTo($"/");
+        }
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        if (firstRender)
+        {
+            await js.InvokeVoidAsync("removeListener");
+        }
+
+
+    }
+
+}

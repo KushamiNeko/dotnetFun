@@ -1,0 +1,256 @@
+@page "/"
+
+@using BlazorAppHttps.Data
+@inject ReportService reportService
+@inject NavigationManager NavigationManager
+
+<div class="container d-flex justify-content-center mt-5">
+
+    <div class="form-container p-4 mx-3 mx-sm-0">
+
+        <h1 class="h2 mb-3 fw-bold w-100 text-center text-white">作業日誌</h1>
+
+        <EditForm Model="@_operator" OnValidSubmit="@HandleValidSubmit">
+            <DataAnnotationsValidator />
+
+            <div class="text-white mb-3">
+
+                @* <div class="mb-2">
+                    <div class="d-flex align-items-center w-100">
+                    <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
+                    <div class="col-12 col-md-3">
+                    <label class="col-form-label">開始時間</label>
+                    </div>
+                    <div class="col">
+                    <div class="form-text text-white">@_operator.ProtocolStart</div>
+                    </div>
+                    </div>
+                    </div>
+                    </div> *@
+
+                <FullSizeInput Label="開始時間" Type="info" Info="@_operator.ProtocolStart.ToString()" />
+                <FullSizeInput Label="担当者" />
+
+                <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
+
+                @* <div class="mb-2">
+                    <div class="d-flex align-items-center w-100">
+                    <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
+                    <div class="col-12 col-md-3">
+                    <label class="col-form-label">担当者</label>
+                    </div>
+                    <div class="col">
+                    <InputText id="name" class="form-control" @bind-Value="_operator.Name" />
+                    </div>
+                    </div>
+                    </div>
+                    </div> *@
+
+
+
+
+                @for (int i = 0; i < _samples.Count; i++)
+                {
+                    @* <div class="mb-3"> *@
+                    <SampleInput Index="@i" RemoveInput="RemoveDNATray"></SampleInput>
+                    @* <label for="@i" class="form-label">Starting Sample ID</label> *@
+                    @* <InputText class="form-control" id="@i" @bind-Value="_samples[i]['from']" /> *@
+                    @* </div> *@
+                }
+
+                <div class="mb-2">
+                    <button type="button" class="btn btn-lg w-100 text-white"
+                        style="background-color: var(--custom-primary-color);" @onclick="NewDNATray">
+                        DNAトレイID追加
+                    </button>
+                </div>
+
+                @* <div class="mb-3">
+                    <label for="nsamples" class="form-label">Number of Samples</label>
+                    <InputText class="form-control" id="nsamples" @bind-Value="_operator.NumberOfSamples" />
+                    </div> *@
+
+                @* <div class="mb-3">
+                    <label for="sid" class="form-label">Starting Sample ID</label>
+                    <InputText class="form-control" id="sid" @bind-Value="_operator.StartPlateID" />
+                    </div>
+
+                    <div class="mb-3">
+                    <label for="eid" class="form-label">Ending Sample ID</label>
+                    <InputText class="form-control" id="eid" @bind-Value="_operator.EndPlateID" />
+                    </div> *@
+
+                @* <div class="mb-2">
+                    <div class="d-flex align-items-center w-100">
+                        <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
+                            <div class="col-12 col-md-3">
+                                <label class="col-form-label">処理検体数</label>
+                            </div>
+                            <div class="col">
+                                <div class="form-text text-white">@_operator.ProtocolStart</div>
+                            </div>
+                        </div>
+                    </div>
+                </div> *@
+
+                <FullSizeInput Label="処理検体数" Type="info" Info="@_operator.ProtocolStart.ToString()" />
+
+
+                <div class="d-flex flex-wrap flex-row align-items-center justify-content-between">
+
+                    @* <div class="mb-2 col-12 col-md-6">
+                        <div class="d-flex align-items-center w-100 px-md-2">
+                            <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
+                                <div class="col-12 col-md-3">
+                                    <label class="col-form-label">通常</label>
+                                </div>
+                                <div class="col">
+                                    <InputText id="name" class="form-control" @bind-Value="_operator.NumberOfSamples" />
+                                </div>
+                            </div>
+                        </div>
+                    </div> *@
+                    <HalfSizeInput Label="通常" />
+                    <HalfSizeInput Label="分割後残検体" />
+                    <HalfSizeInput Label="再採便" />
+                    <HalfSizeInput Label="再採便分割後残検体" />
+                    <HalfSizeInput Label="NC" />
+                    <HalfSizeInput Label="ダミー" />
+
+                    @* <div class="mb-2 col-12 col-md-6">
+                        <div class="d-flex align-items-center w-100 px-md-2">
+                            <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
+                                <div class="col-12 col-md-3">
+                                    <label class="col-form-label">分割後残検体</label>
+                                </div>
+                                <div class="col">
+                                    <InputText id="name" class="form-control" @bind-Value="_operator.NumberOfSamples" />
+                                </div>
+                            </div>
+                        </div>
+                    </div> *@
+
+                    @* <div class="mb-2">
+                        <div class="d-flex align-items-center w-100">
+                        <div class="row w-100 align-items-center">
+                        <div class="col-3">
+                        <label class="col-form-label">再採便</label>
+                        </div>
+                        <div class="col">
+                        <InputText id="name" class="form-control" @bind-Value="_operator.NumberOfSamples" />
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+
+                        <div class="mb-2">
+                        <div class="d-flex align-items-center w-100">
+                        <div class="row w-100 align-items-center">
+                        <div class="col-3">
+                        <label class="col-form-label">再採便分割後残検体</label>
+                        </div>
+                        <div class="col">
+                        <InputText id="name" class="form-control" @bind-Value="_operator.NumberOfSamples" />
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+
+                        <div class="mb-2">
+                        <div class="d-flex align-items-center w-100">
+                        <div class="row w-100 align-items-center">
+                        <div class="col-3">
+                        <label class="col-form-label">NC</label>
+                        </div>
+                        <div class="col">
+                        <InputText id="name" class="form-control" @bind-Value="_operator.NumberOfSamples" />
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+
+                        <div class="mb-2">
+                        <div class="d-flex align-items-center w-100">
+                        <div class="row w-100 align-items-center">
+                        <div class="col-3">
+                        <label class="col-form-label">ダミー</label>
+                        </div>
+                        <div class="col">
+                        <InputText id="name" class="form-control" @bind-Value="_operator.NumberOfSamples" />
+                        </div>
+                        </div>
+                        </div>
+                        </div> *@
+
+                </div>
+
+            </div>
+
+            @* 作業開始
+                終了時刻
+                責任者
+                対象検体名
+                処理検体数
+
+                通常
+                分割後残検体
+                再採便
+                NC
+                ダミー
+
+                DNAトレイID
+                検体のトレイID位置情報
+
+                送信
+            *@
+
+            @* DNAトレイID追加 *@
+
+
+            <ValidationSummary />
+
+            <button class="btn btn-lg w-100 text-white" style="background-color: var(--custom-primary-color);"
+                type="submit">
+                @* OK *@
+                開始
+            </button>
+
+        </EditForm>
+
+    </div>
+
+</div>
+
+@code {
+
+    private Operator _operator = new Operator
+    {
+        ProtocolStart = DateTime.Now,
+    };
+
+    private List<Dictionary<string, string>> _samples = new();
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine(_operator.Name);
+        reportService.LogOperator(_operator);
+        NavigationManager.NavigateTo($"/starting");
+
+        // Process the valid form
+    }
+
+    private void NewDNATray()
+    {
+        var d = new Dictionary<string, string>();
+        d.Add("from", "");
+        d.Add("to", "");
+        _samples.Add(d);
+    }
+
+    private void RemoveDNATray(int i)
+    {
+        Console.WriteLine(i);
+        _samples.RemoveAt(i);
+    }
+
+}

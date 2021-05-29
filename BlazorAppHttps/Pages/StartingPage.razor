@@ -1,0 +1,23 @@
+@page "/starting"
+
+@inject NavigationManager NavigationManager
+@inject StepService stepService
+@using BlazorAppHttps.Data
+
+<h1>受付：検体処理者（3 hr）​</h1>
+
+@foreach (var step in stepService.Steps)
+{
+    <p class="h3 mb-4">@step.Title</p>
+}
+
+<button class="btn btn-primary" @onclick="ProtocolStart">Start</button>
+
+@code {
+
+
+    private void ProtocolStart()
+    {
+        NavigationManager.NavigateTo($"/step");
+    }
+}
