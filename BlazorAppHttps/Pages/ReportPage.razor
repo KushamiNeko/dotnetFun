@@ -8,10 +8,10 @@
 <h3>作業日誌</h3>
 
 <h2>Operator: @reportService.Operator?.Name</h2>
-<h2>Protocol Begin: @reportService.Operator?.ProtocolStart.ToString(_dateTimeFormat)</h2>
-<h2>Protocol Complete: @reportService.Operator?.ProtocolEnd.ToString(_dateTimeFormat)</h2>
-<h2>Sample ID From: @reportService.Operator?.StartPlateID</h2>
-<h2>Sample ID To: @reportService.Operator?.EndPlateID</h2>
+<h2>Protocol Begin: @reportService.Operator?.ProtocolStart.ToString()</h2>
+<h2>Protocol Complete: @reportService.Operator?.ProtocolEnd.ToString()</h2>
+@* <h2>Sample ID From: @reportService.Operator?.StartPlateID</h2>
+<h2>Sample ID To: @reportService.Operator?.EndPlateID</h2> *@
 <h2>Number of Samples: @reportService.Operator?.NumberOfSamples</h2>
 
 @foreach (var pair in reportService.Logs)

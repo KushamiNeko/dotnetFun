@@ -1,56 +1,111 @@
 <div class="mb-2">
-                <FullSizeInput Label="DNAトレイID" />
-                <FullSizeInput Label="検体のトレイID位置情報" />
+
+    <button type="button" class="btn btn-lg w-100 text-white mb-2"
+        style="background-color: var(--custom-primary-color);" @onclick="RemoveButtonClick">
+        削除
+    </button>
+
+    <FullSizeInput Label="DNAトレイID" @bind-Value="_trayID" />
+    <FullSizeInput Label="検体のトレイID位置情報" @bind-Value="_location" ValueChangedListener="OnLocationValueChanged"/>
 
     @* <div class="mb-2">
 
         <div class="d-flex flex-column justify-content-around align-items-center">
 
-            <div class="d-flex align-items-center w-100">
-                <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
-                    <div class="col-12 col-md-3">
-                        <label class="col-form-label">DNAトレイID</label>
-                    </div>
-                    <div class="col">
-                        <input class="form-control" />
-                    </div>
-                </div>
-            </div>
+        <div class="d-flex align-items-center w-100">
+        <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
+        <div class="col-12 col-md-3">
+        <label class="col-form-label">DNAトレイID</label>
+        </div>
+        <div class="col">
+        <input class="form-control" />
+        </div>
+        </div>
+        </div>
 
 
-            <div class="d-flex align-items-center w-100">
-                <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
-                    <div class="col-12 col-md-3">
-                        <label class="col-form-label">検体のトレイID位置情報</label>
-                    </div>
-                    <div class="col">
-                        <input class="form-control" />
-                    </div>
-                </div>
-            </div>
+        <div class="d-flex align-items-center w-100">
+        <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
+        <div class="col-12 col-md-3">
+        <label class="col-form-label">検体のトレイID位置情報</label>
+        </div>
+        <div class="col">
+        <input class="form-control" />
+        </div>
+        </div>
+        </div>
 
-        </div> 
-    </div>*@
+        </div>
+        </div>*@
 
-    <button type="button" class="btn btn-lg w-100 text-white" style="background-color: var(--custom-primary-color);"
-        @onclick="RemoveButtonClick">
-        削除
-    </button>
+
 
 </div>
 
 
 
 @code {
-    [Parameter]
-    public int Index { get; set; }
+    private string _trayID
+    {
+        get => TrayID;
+        set
+        {
+            TrayIDChanged.InvokeAsync(value);
+        }
+    }
+    private string _location
+    {
+        get => Location;
+        set => LocationChanged.InvokeAsync(value);
+    }
 
     [Parameter]
-    public EventCallback<int> RemoveInput { get; set; }
+    public string UID { get; set; }
+
+    [Parameter]
+    public EventCallback<string> RemoveInput { get; set; }
+
+
+    [Parameter]
+    public string TrayID { get; set; }
+
+    [Parameter]
+    public EventCallback<string> TrayIDChanged { get; set; }
+
+    @* private async Task OnTrayIDChanged(ChangeEventArgs e)
+        {
+        _trayID = e.Value.ToString();
+
+        await TrayIDChanged.InvokeAsync(_trayID);
+        } *@
+
+    [Parameter]
+    public string Location { get; set; }
+
+    [Parameter]
+    public EventCallback<string> LocationChanged { get; set; }
+
+        [Parameter]
+    public EventCallback LocationValueChangedListener { get; set; }
+
+    @* private async Task OnLocationChanged(ChangeEventArgs e)
+        {
+        _location = e.Value.ToString();
+
+        await LocationChanged.InvokeAsync(_location);
+        } *@
 
     private async Task RemoveButtonClick()
     {
-        await RemoveInput.InvokeAsync(Index);
+        await RemoveInput.InvokeAsync(UID);
+        if (LocationValueChangedListener.HasDelegate) {
+            await LocationValueChangedListener.InvokeAsync(null);
+        }
     }
 
+    private async Task OnLocationValueChanged() {
+        if (LocationValueChangedListener.HasDelegate) {
+            await LocationValueChangedListener.InvokeAsync(null);
+        }
+    }
 }

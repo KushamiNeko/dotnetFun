@@ -13,7 +13,7 @@
                 }
                 else
                 {
-                    <input class="form-control" />
+                    <input @oninput="OnValueChanged" class="form-control" value="@Value" />
                 }
 
             </div>
@@ -23,6 +23,9 @@
 
 
 @code {
+
+    @* private string _value; *@
+
     [Parameter]
     public string Label { get; set; }
 
@@ -31,4 +34,30 @@
 
     [Parameter]
     public string Type { get; set; }
+
+    [Parameter]
+    public string Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public EventCallback ValueChangedListener { get; set; }
+
+    private async Task OnValueChanged(ChangeEventArgs e)
+    {
+        @* _value = e.Value.ToString(); *@
+
+        @* await ValueChanged.InvokeAsync(_value); *@
+        
+        await ValueChanged.InvokeAsync(e.Value.ToString());
+
+        if (ValueChangedListener.HasDelegate)
+        {
+            await ValueChangedListener.InvokeAsync(null);
+        }
+
+
+    }
+
 }
