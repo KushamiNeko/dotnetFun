@@ -10,72 +10,23 @@
 
         <h1 class="h2 mb-3 fw-bold w-100 text-center text-white">作業日誌</h1>
 
-        @* <EditForm Model="@_operator" OnValidSubmit="@HandleValidSubmit"> *@
-            <form>
-            @* <DataAnnotationsValidator /> *@
+        <form>
 
-            <div class="text-white mb-3">
-
-                @* <div class="mb-2">
-                    <div class="d-flex align-items-center w-100">
-                    <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
-                    <div class="col-12 col-md-3">
-                    <label class="col-form-label">開始時間</label>
-                    </div>
-                    <div class="col">
-                    <div class="form-text text-white">@_operator.ProtocolStart</div>
-                    </div>
-                    </div>
-                    </div>
-                    </div> *@
+            <div class="text-white mb-2">
 
                 <FullSizeInput Label="開始時間" Type="info" Info="@_operator.ProtocolStart.ToString()" />
-                <FullSizeInput Label="担当者" @bind-Value="_operator.Name" />
+                <FullSizeInput Label="担当者" @bind-Value="_operator.Name" ValueChangedListener="ValidateInputs" />
 
                 <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
-
-                @* <div class="mb-2">
-                    <div class="d-flex align-items-center w-100">
-                    <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
-                    <div class="col-12 col-md-3">
-                    <label class="col-form-label">担当者</label>
-                    </div>
-                    <div class="col">
-                    <InputText id="name" class="form-control" @bind-Value="_operator.Name" />
-                    </div>
-                    </div>
-                    </div>
-                    </div> *@
-
-
-
-
-                @* @for (int i = 0; i < _operator.DNATrayInputs.Count; i++) *@
-                @* { *@
-                @* <div class="mb-3"> *@
-                @* <SampleInput Index="@i" RemoveInput="RemoveDNATray" @bind-TrayID="_operator.DNATrayInputs[i].ID"
-                    @bind-Location="_operator.DNATrayInputs[i].Location">
-
-                    </SampleInput> *@
-                @* <FullSizeInput Label="担当者" @bind-Value="_operator.DNATrayInputs[i].ID" /> *@
-
-                @* <label for="@i" class="form-label">Starting Sample ID</label> *@
-                @* <InputText class="form-control" id="@i" @bind-Value="_samples[i]['from']" /> *@
-                @* </div> *@
-                @* } *@
-
 
                 @foreach (var input in _operator.DNATrayInputs)
                 {
-                    @* <FullSizeInput Label="担当者" @bind-Value="input.ID" /> *@
-                    <SampleInput UID="@input.UID" RemoveInput="RemoveDNATray" LocationValueChangedListener="CalculateNumberOfSamples" @bind-TrayID="input.TrayID"
-                    @bind-Location="input.Location">
-                </SampleInput>
-
+                    <SampleInput UID="@input.UID" RemoveInput="RemoveDNATray" LocationValueChangedListener="ValidateInputs"
+                    @bind-TrayID="input.TrayID" @bind-Location="input.Location">
+                    </SampleInput>
                 }
 
                 <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
-
 
                 <div class="mb-2">
                     <button type="button" class="btn btn-lg w-100 text-white"
@@ -84,126 +35,22 @@
                     </button>
                 </div>
 
-                @* <div class="mb-3">
-                    <label for="nsamples" class="form-label">Number of Samples</label>
-                    <InputText class="form-control" id="nsamples" @bind-Value="_operator.NumberOfSamples" />
-                    </div> *@
-
-                @* <div class="mb-3">
-                    <label for="sid" class="form-label">Starting Sample ID</label>
-                    <InputText class="form-control" id="sid" @bind-Value="_operator.StartPlateID" />
-                    </div>
-
-                    <div class="mb-3">
-                    <label for="eid" class="form-label">Ending Sample ID</label>
-                    <InputText class="form-control" id="eid" @bind-Value="_operator.EndPlateID" />
-                    </div> *@
-
-                @* <div class="mb-2">
-                    <div class="d-flex align-items-center w-100">
-                    <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
-                    <div class="col-12 col-md-3">
-                    <label class="col-form-label">処理検体数</label>
-                    </div>
-                    <div class="col">
-                    <div class="form-text text-white">@_operator.ProtocolStart</div>
-                    </div>
-                    </div>
-                    </div>
-                    </div> *@
-
                 <FullSizeInput Label="処理検体数" Type="info" Info="@_operator.NumberOfSamples.ToString()" />
-
 
                 <div class="d-flex flex-wrap flex-row align-items-center justify-content-between">
 
-                    @* <div class="mb-2 col-12 col-md-6">
-                        <div class="d-flex align-items-center w-100 px-md-2">
-                        <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
-                        <div class="col-12 col-md-3">
-                        <label class="col-form-label">通常</label>
-                        </div>
-                        <div class="col">
-                        <InputText id="name" class="form-control" @bind-Value="_operator.NumberOfSamples" />
-                        </div>
-                        </div>
-                        </div>
-                        </div> *@
-                    <HalfSizeInput Label="通常" @bind-Value="_operator.NumberOfNormalSamples" />
-                    <HalfSizeInput Label="分割後残検体" @bind-Value="_operator.NumberOfRemainSamples" />
-                    <HalfSizeInput Label="再採便" @bind-Value="_operator.NumberOfRedoSamples" />
-                    <HalfSizeInput Label="再採便分割後残検体" @bind-Value="_operator.NumberOfRedoRemainSamples" />
+                    <HalfSizeInput Label="通常" @bind-Value="_operator.NumberOfNormalSamples"
+                        ValueChangedListener="ValidateInputs" />
+                    <HalfSizeInput Label="分割後残検体" @bind-Value="_operator.NumberOfRemainSamples"
+                        ValueChangedListener="ValidateInputs" />
+                    <HalfSizeInput Label="再採便" @bind-Value="_operator.NumberOfRedoSamples"
+                        ValueChangedListener="ValidateInputs" />
+                    <HalfSizeInput Label="再採便分割後残検体" @bind-Value="_operator.NumberOfRedoRemainSamples"
+                        ValueChangedListener="ValidateInputs" />
                     <HalfSizeInput Label="NC" Type="info" Info="@_operator.NumberOfNCSamples.ToString()" />
                     <HalfSizeInput Label="ダミー" Type="info" Info="@_operator.NumberOfDummySamples.ToString()" />
 
-                    @* <div class="mb-2 col-12 col-md-6">
-                        <div class="d-flex align-items-center w-100 px-md-2">
-                        <div class="d-flex flex-wrap flex-row gx-2 w-100 align-items-center">
-                        <div class="col-12 col-md-3">
-                        <label class="col-form-label">分割後残検体</label>
-                        </div>
-                        <div class="col">
-                        <InputText id="name" class="form-control" @bind-Value="_operator.NumberOfSamples" />
-                        </div>
-                        </div>
-                        </div>
-                        </div> *@
-
-                    @* <div class="mb-2">
-                        <div class="d-flex align-items-center w-100">
-                        <div class="row w-100 align-items-center">
-                        <div class="col-3">
-                        <label class="col-form-label">再採便</label>
-                        </div>
-                        <div class="col">
-                        <InputText id="name" class="form-control" @bind-Value="_operator.NumberOfSamples" />
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-
-                        <div class="mb-2">
-                        <div class="d-flex align-items-center w-100">
-                        <div class="row w-100 align-items-center">
-                        <div class="col-3">
-                        <label class="col-form-label">再採便分割後残検体</label>
-                        </div>
-                        <div class="col">
-                        <InputText id="name" class="form-control" @bind-Value="_operator.NumberOfSamples" />
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-
-                        <div class="mb-2">
-                        <div class="d-flex align-items-center w-100">
-                        <div class="row w-100 align-items-center">
-                        <div class="col-3">
-                        <label class="col-form-label">NC</label>
-                        </div>
-                        <div class="col">
-                        <InputText id="name" class="form-control" @bind-Value="_operator.NumberOfSamples" />
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-
-                        <div class="mb-2">
-                        <div class="d-flex align-items-center w-100">
-                        <div class="row w-100 align-items-center">
-                        <div class="col-3">
-                        <label class="col-form-label">ダミー</label>
-                        </div>
-                        <div class="col">
-                        <InputText id="name" class="form-control" @bind-Value="_operator.NumberOfSamples" />
-                        </div>
-                        </div>
-                        </div>
-                        </div> *@
-
                 </div>
-
-                @* <FullSizeInput Label="処理検体数" Type="info" Info="@_operator.NumberOfSamples.ToString()" /> *@
 
             </div>
 
@@ -223,20 +70,24 @@
                 検体のトレイID位置情報
 
                 送信
+                DNAトレイID追加
             *@
 
-            @* DNAトレイID追加 *@
-
-
-            @* <ValidationSummary /> *@
+            @if (!_operator.InputIsValid)
+            {
+                <div class="mb-2">
+                    @foreach (var err in _operator.ErrorMessages)
+                    {
+                        <div class="fs-6 px-3" style="color: var(--custom-error-color);">@err</div>
+                    }
+                </div>
+            }
 
             <button class="btn btn-lg w-100 text-white" style="background-color: var(--custom-primary-color);"
                 type="button" @onclick="HandleValidSubmit">
-                @* OK *@
                 開始
             </button>
 
-        @* </EditForm> *@
         </form>
 
     </div>
@@ -250,57 +101,35 @@
         ProtocolStart = DateTime.Now,
     };
 
-    @* private List<DNATrayInput> _samples = new(); *@
 
     private void HandleValidSubmit()
     {
-        Console.WriteLine(_operator.Name);
-        Console.WriteLine(_operator.ProtocolStart);
-        Console.WriteLine(_operator.ProtocolEnd);
+        _operator.ValidateInputs();
 
-        _operator.DNATrayInputs.ForEach((v) =>
+        if (!_operator.InputIsValid)
         {
-            Console.WriteLine(v.TrayID);
-            Console.WriteLine(v.Location);
-        });
+            return;
+        }
 
-        Console.WriteLine(_operator.NumberOfSamples);
-        Console.WriteLine(_operator.NumberOfNormalSamples);
-        Console.WriteLine(_operator.NumberOfRemainSamples);
-        Console.WriteLine(_operator.NumberOfRedoSamples);
-        Console.WriteLine(_operator.NumberOfRedoRemainSamples);
-        Console.WriteLine(_operator.NumberOfNCSamples);
-        Console.WriteLine(_operator.NumberOfDummySamples);
-        @* reportService.LogOperator(_operator); *@
-        @* NavigationManager.NavigateTo($"/starting"); *@
-
-        // Process the valid form
+        reportService.LogOperator(_operator);
+        NavigationManager.NavigateTo($"/starting");
     }
 
     private void NewDNATray()
     {
-        @* var d = new Dictionary<string, string>();
-            d.Add("from", "");
-            d.Add("to", ""); *@
         _operator.DNATrayInputs.Add(new DNATrayInput());
+        _operator.ValidateInputs();
     }
 
     private void RemoveDNATray(string uid)
     {
-        Console.WriteLine(uid);
-        @* _operator.DNATrayInputs.RemoveAt(i); *@
         _operator.DNATrayInputs = _operator.DNATrayInputs.Where((input) => input.UID != uid).ToList();
-         _operator.DNATrayInputs.ForEach((v) =>
-        {
-            Console.WriteLine(v.TrayID);
-            Console.WriteLine(v.Location);
-        });
-
-        @* StateHasChanged(); *@
+        _operator.ValidateInputs();
     }
 
-    private void CalculateNumberOfSamples() {
-        _operator.CalculateNumberOfSamples();
+    private void ValidateInputs()
+    {
+        _operator.ValidateInputs();
     }
 
 }

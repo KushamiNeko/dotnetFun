@@ -8,74 +8,75 @@
 @inject StepService stepService
 @inject ReportService reportService
 
-@* <div class="d-none d-md-flex nav justify-content-around bg-dark"> *@
-@* <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="#">Active</a>
-    </li>
-    <li class="nav-item">
-    <a class="nav-link" href="#">Link</a>
-    </li>
-    <li class="nav-item">
-    <a class="nav-link" href="#">Link</a>
-    </li>
-    <li class="nav-item">
-    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-    </li> *@
-@* </div> *@
-
-@* <div class="d-none d-md-flex progress">
-    <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0"
-    aria-valuemax="100"></div>
-    </div> *@
-
-<span class="d-block step-separator-xl"></span>
+@* <span class="d-block step-separator-xl"></span> *@
 
 <div class="page-container my-5 my-md-0">
 
-    <div class="container-fluid">
-        <div class="row mx-0 mx-md-5">
+    @* <div class="container-fluid"> *@
+    <div class="container-fluid p-0 m-0">
 
-            <div class="d-flex col-md-6 px-2 px-md-4 align-middle">
+        @* <div class="d-flex flex-wrap flex-row mx-0 mx-md-5"> *@
+        <div class="d-flex flex-wrap flex-row p-0 m-0 justify-content-center">
 
-                <div class="d-flex align-items-center">
-                    <div>
-                        <p class="page-title bg-dark p-4 text-white">
-                            <strong>
-                                @steps[StepId].Title
-                            </strong>
-                        </p>
+            @* <div class="d-flex col-md-6 px-2 px-md-4 align-middle"> *@
+            <div class="d-flex col-md-6 px-0 align-middle">
 
-                        @* @foreach (var description in steps[StepId].Descriptions)
+                <div class="d-flex justify-content-center align-items-center">
+
+                    <div class="px-2 px-md-5">
+
+                        <div class="mb-2">
+                            <p class="h2 text-white ln-1 m-0" style="opacity: var(--custom-text-alpha-a);">
+                                <strong>
+                                    @steps[StepId].Title@steps[StepId].Subtitle
+                                </strong>
+                            </p>
+                            @* @if (!String.IsNullOrEmpty(@steps[StepId].Subtitle))
                             {
-                            <p class="h3 mb-4">@description</p>
+                                <p class="h2 text-white ln-1 m-0" style="opacity: var(--custom-text-alpha-a);">
+                                    <strong>
+                                        
+                                    </strong>
+                                </p>
                             } *@
+                        </div>
 
-                        <span class="d-block step-separator-xl"></span>
-                        @* <Separator></Separator> *@
+                        <ul>
+                            @foreach (var description in steps[StepId].Descriptions)
+                            {
 
-                        @for (int i = 0; i < steps[StepId].Descriptions.Count; i++)
-                        {
-                            @* <p class="h3 mb-4">@steps[StepId].Descriptions[i]</p> *@
+                                <li class="text-white lh-lg fs-5 m-0" style="opacity: var(--custom-text-alpha-b);">
+                                    @description</li>
+                            }
+                        </ul>
+
+                        @* <span class="d-block step-separator-xl"></span> *@
+
+
+                        @* @for (int i = 0; i < steps[StepId].Descriptions.Count; i++)
+                            {
+
                             <p class="page-description px-3">@steps[StepId].Descriptions[i]</p>
 
                             if (i != steps[StepId].Descriptions.Count - 1)
                             {
-                                <span class="d-block step-separator"></span>
-                                @* <span class="d-block mb-3 mb-sm-4"></span> *@
-                                @* <Separator></Separator> *@
-
+                            <span class="d-block step-separator"></span>
                             }
-                        }
+                            } *@
                     </div>
+
                 </div>
 
             </div>
 
-            <span class="d-block d-md-none mb-3 mb-sm-4 mb-md-5"></span>
+            @* <span class="d-block d-md-none mb-3 mb-sm-4 mb-md-5"></span> *@
 
-            <div class="d-flex col-md-6 justify-content-center align-items-center">
-                <img src="@imageSrc" class="img-fluid" style="border-radius: 2rem;" />
+            <div class="d-flex col-md-6 justify-content-center align-items-center m-0 p-0">
+                <img src="@imageSrc" class="w-100" style="object-fit: cover;" />
             </div>
+
+            @* <div class="col-12 bg-dark" style="height: 3.5rem;"></div> *@
+            <div class="col-12 my-3" style="height: 5px; background-color: var(--custom-primary-color);"></div>
 
         </div>
 
@@ -96,11 +97,13 @@
     protected override void OnInitialized()
     @* protected override async Task OnInitializedAsync() *@
     {
-        if (reportService.Operator == null)
-        {
+        @* if (reportService.Operator == null)
+            {
             NavigationManager.NavigateTo($"/");
-        }
+            } *@
+
         @* steps = await stepService.GetStepsAsync(); *@
+
         steps = stepService.Steps;
         if (StepId >= steps.Count || StepId < 0)
         {
@@ -138,14 +141,15 @@
         int newId;
         switch (key)
         {
-            //case 37:
-            // newId = StepId - 1;
-            // if (newId >= 0)
-            // {
-            // reportService.UndoStep(steps[StepId].Title);
-            // NavigationManager.NavigateTo($"/step/{newId}");
-            // }
-            // break;
+            case 37:
+                newId = StepId - 1;
+                if (newId >= 0)
+                {
+                    reportService.UndoStep(steps[StepId].Title);
+                    NavigationManager.NavigateTo($"/step/{newId}");
+                }
+                break;
+
             case 39:
                 reportService.LogStep(steps[StepId].Title);
 

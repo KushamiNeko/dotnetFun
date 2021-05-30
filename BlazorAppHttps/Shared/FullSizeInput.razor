@@ -5,7 +5,6 @@
                 <label class="col-form-label">@Label</label>
             </div>
             <div class="col">
-                @* <InputText id="name" class="form-control" @bind-Value="_operator.Name" /> *@
 
                 @if (Type == "info")
                 {
@@ -23,8 +22,6 @@
 
 
 @code {
-
-    @* private string _value; *@
 
     [Parameter]
     public string Label { get; set; }
@@ -46,18 +43,12 @@
 
     private async Task OnValueChanged(ChangeEventArgs e)
     {
-        @* _value = e.Value.ToString(); *@
-
-        @* await ValueChanged.InvokeAsync(_value); *@
-        
         await ValueChanged.InvokeAsync(e.Value.ToString());
 
         if (ValueChangedListener.HasDelegate)
         {
             await ValueChangedListener.InvokeAsync(null);
         }
-
-
     }
 
 }

@@ -4,14 +4,28 @@
 @inject StepService stepService
 @using BlazorAppHttps.Data
 
-<h1>受付：検体処理者（3 hr）​</h1>
+<div class="container d-flex justify-content-center mt-5">
 
-@foreach (var step in stepService.Steps)
-{
-    <p class="h3 mb-4">@step.Title</p>
-}
+    <div class="form-container p-4 mx-3 mx-sm-0">
 
-<button class="btn btn-primary" @onclick="ProtocolStart">Start</button>
+        <h1 class="h2 mb-3 fw-bold w-100 text-center text-white">受付：検体処理者（3 hr）</h1>
+
+        <ol class="mb-2">
+            @foreach (var step in stepService.Steps)
+            {
+                <li class="fs-5 mb-2 text-white">@step.Title</li>
+            }
+        </ol>
+
+        <button class="btn btn-lg w-100 text-white" style="background-color: var(--custom-primary-color);" type="button"
+            @onclick="ProtocolStart">
+            開始
+        </button>
+
+    </div>
+
+</div>
+
 
 @code {
 

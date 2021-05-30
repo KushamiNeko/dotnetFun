@@ -43,42 +43,103 @@ namespace BlazorAppHttps.Data
 
         public List<string> ErrorMessages { get; set; } = new List<string>();
 
-        private void InvalidMessage(bool condition, string message) {
-            if (condition) {
-                InputIsValid = false;
-                ErrorMessages.Add(message);
+        private void IfInvalidMessage(bool condition, string message)
+        {
+            if (condition)
+            {
+                // InputIsValid = false;
+                // ErrorMessages.Add(message);
+                InvalidMessage(message);
             }
         }
 
-        private void ValidateInput()
+        private void InvalidMessage(string message)
         {
+            InputIsValid = false;
+            ErrorMessages.Add(message);
+        }
+
+        public void ValidateInputs()
+        {
+
+            InputIsValid = true;
 
             ErrorMessages.Clear();
 
-            InvalidMessage(String.IsNullOrEmpty(Name), "name is required");
-            InvalidMessage(DNATrayInputs.Count == 0, "DNATrays are required");
-            InvalidMessage(NumberOfSamples == 0, "number of samples should be greater than 0");
-            // InvalidMessage(String.IsNullOrEmpty(Name), "name is required");
+            IfInvalidMessage(String.IsNullOrEmpty(Name), "担当者が必要です");
 
-            // if(String.IsNullOrEmpty(Name)) {
-            //     InputIsValid = false;
-            //     ErrorMessages.Add("name is required");
-            // }
+            if (DNATrayInputs.Count == 0)
+            {
+                InvalidMessage("DNAトレイが必要です");
+            }
+            else
+            {
+                CalculateNumberOfSamples();
+                // IfInvalidMessage(NumberOfSamples == 0, "DNAトレイが必要です");
+            }
 
-            // if(DNATrayInputs.Count == 0) {
-            //     InputIsValid = false;
-            //     ErrorMessages.Add("DNATrays are required");
-            // }
+            // IfInvalidMessage(DNATrayInputs.Count == 0, "DNATrays are required");
 
-            // if(NumberOfSamples == 0) {
-            //     InputIsValid = false;
-            //     ErrorMessages.Add("DNATrays are required");
-            // }
+
+            uint n = 0;
+
+            uint samples = 0;
+            if (!String.IsNullOrEmpty(NumberOfNormalSamples))
+            {
+                if (UInt32.TryParse(NumberOfNormalSamples, out samples))
+                {
+                    n += samples;
+                }
+                else
+                {
+                    InvalidMessage("無効な通常の入力");
+                }
+            }
+
+            if (!String.IsNullOrEmpty(NumberOfRemainSamples))
+            {
+                if (UInt32.TryParse(NumberOfRemainSamples, out samples))
+                {
+                    n += samples;
+                }
+                else
+                {
+                    InvalidMessage("無効な分割後残検体の入力");
+                }
+            }
+
+            if (!String.IsNullOrEmpty(NumberOfRedoSamples))
+            {
+                if (UInt32.TryParse(NumberOfRedoSamples, out samples))
+                {
+                    n += samples;
+                }
+                else
+                {
+                    InvalidMessage("無効な再採便の入力");
+                }
+            }
+
+            if (!String.IsNullOrEmpty(NumberOfRedoRemainSamples))
+            {
+                if (UInt32.TryParse(NumberOfRedoRemainSamples, out samples))
+                {
+                    n += samples;
+                }
+                else
+                {
+                    InvalidMessage("無効な再採便分割後残検体の入力");
+                }
+            }
+
+            IfInvalidMessage(n != NumberOfSamples - NumberOfNCSamples - NumberOfDummySamples, "サンプル数が一致しません");
 
         }
 
-        public void CalculateNumberOfSamples()
+        private void CalculateNumberOfSamples()
         {
+
+            Regex regexTrayID = new Regex(@"^[a-zA-Z0-9]+$", RegexOptions.Compiled);
 
             Regex regexCheck = new Regex(@"^\s*[a-hA-H0-9-~, ]+\s*$", RegexOptions.Compiled);
 
@@ -86,16 +147,24 @@ namespace BlazorAppHttps.Data
             Regex regexSingle = new Regex(@"^\s*((?<row>[a-hA-H]{1})(?<col>[0-9]{1,2})|(?<col2>[0-9]{1,2})(?<row2>[a-hA-H]{1}))\s*$", RegexOptions.Compiled);
 
             // Regex regexRange = new Regex(@"^\s*([a-hA-H]{1}[0-9]{1,2})\s*[-]\s*([a-hA-H]{1}[0-9]{1,2})\s*$", RegexOptions.Compiled);
+
             Regex regexRange = new Regex(
                 @"^\s*((?<StartRow>[a-hA-H]{1})(?<StartCol>[0-9]{1,2})|(?<StartCol2>[0-9]{1,2})(?<StartRow2>[a-hA-H]{1}))\s*[-]\s*((?<EndRow>[a-hA-H]{1})(?<EndCol>[0-9]{1,2})|(?<EndCol2>[0-9]{1,2})(?<EndRow2>[a-hA-H]{1}))\s*$",
                 RegexOptions.Compiled);
 
             float ntraySamples = 0;
 
-            DNATrayInputs.ForEach((input) =>
+            // DNATrayInputs.ForEach((input) =>
+            foreach (DNATrayInput input in DNATrayInputs)
             {
+                IfInvalidMessage(String.IsNullOrEmpty(input.TrayID) || !regexTrayID.IsMatch(input.TrayID), "DNAトレイIDが必要です");
+
                 if (String.IsNullOrEmpty(input.Location) || !regexCheck.IsMatch(input.Location))
                 {
+                    // InputIsValid = false;
+                    // ErrorMessages.Add("tray Location should not be empty");
+
+                    InvalidMessage("検体のトレイID位置情報が必要です");
                     return;
                 }
 
@@ -128,6 +197,10 @@ namespace BlazorAppHttps.Data
                             }
                             else
                             {
+                                // InputIsValid = false;
+                                // ErrorMessages.Add("tray Location format error");
+                                InvalidMessage("無効な検体のトレイID位置情報の入力");
+
                                 return;
                             }
 
@@ -143,6 +216,9 @@ namespace BlazorAppHttps.Data
                             }
                             else
                             {
+                                // InputIsValid = false;
+                                // ErrorMessages.Add("tray Location format error");
+                                InvalidMessage("無効な検体のトレイID位置情報の入力");
                                 return;
                             }
 
@@ -166,6 +242,9 @@ namespace BlazorAppHttps.Data
 
                             if (e < s)
                             {
+                                // InputIsValid = false;
+                                // ErrorMessages.Add("tray Location format error");
+                                InvalidMessage("無効な検体のトレイID位置情報の入力");
                                 return;
                             }
 
@@ -179,12 +258,15 @@ namespace BlazorAppHttps.Data
                     }
                     else
                     {
-
+                        // InputIsValid = false;
+                        // ErrorMessages.Add("tray Location format error");
+                        InvalidMessage("無効な検体のトレイID位置情報の入力");
                     }
 
                 }
 
-            });
+                // });
+            }
 
             // NumberOfSamples = num;
 
