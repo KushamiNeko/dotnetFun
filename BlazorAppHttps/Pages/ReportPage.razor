@@ -5,23 +5,108 @@
 @using BlazorAppHttps.Data
 @inject ReportService reportService
 
-<h3>作業日誌</h3>
+@* <h3>作業日誌</h3> *@
 
-<h2>Operator: @reportService.Operator?.Name</h2>
-<h2>Protocol Begin: @reportService.Operator?.ProtocolStart.ToString()</h2>
-<h2>Protocol Complete: @reportService.Operator?.ProtocolEnd.ToString()</h2>
+@* <h2>Operator: @reportService.Operator?.Name</h2> *@
+@* <h2>Protocol Begin: @reportService.Operator?.ProtocolStart.ToString()</h2> *@
+@* <h2>Protocol Complete: @reportService.Operator?.ProtocolEnd.ToString()</h2> *@
 @* <h2>Sample ID From: @reportService.Operator?.StartPlateID</h2>
-<h2>Sample ID To: @reportService.Operator?.EndPlateID</h2> *@
-<h2>Number of Samples: @reportService.Operator?.NumberOfSamples</h2>
+    <h2>Sample ID To: @reportService.Operator?.EndPlateID</h2> *@
+@* <h2>Number of Samples: @reportService.Operator?.NumberOfSamples</h2> *@
 
-@foreach (var pair in reportService.Logs)
-{
-    <h4>@pair.Value.ToString(_dateTimeFormat) ..... @pair.Key</h4>
-}
+
+
+<div class="container d-flex justify-content-center my-5">
+
+    <div class="form-container p-4 mx-3 mx-sm-0">
+
+        <h1 class="h2 mb-3 fw-bold w-100 text-center text-white" style="opacity: var(--custom-text-alpha-a);">作業日誌</h1>
+
+        <form>
+
+            <div class="text-white mb-2">
+
+                <FullSizeInput Label="担当者" Type="info" Info="@reportService.Operator.Name" />
+                <FullSizeInput Label="開始時間" Type="info" Info="@reportService.Operator.ProtocolStart.ToString()" />
+                <FullSizeInput Label="終了時刻" Type="info" Info="@reportService.Operator.ProtocolEnd.ToString()" />
+
+                <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
+
+                @foreach (var input in reportService.Operator.DNATrayInputs)
+                {
+                    <SampleInput UID="@input.UID" Type="info" @bind-TrayID="input.TrayID" @bind-Location="input.Location">
+                    </SampleInput>
+                }
+
+                <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
+
+                @* <div class="mb-2">
+                    <button type="button" class="btn btn-lg w-100 text-white"
+                    style="background-color: var(--custom-primary-color);" @onclick="NewDNATray">
+                    DNAトレイID追加
+                    </button>
+                    </div> *@
+
+                <FullSizeInput Label="処理検体数" Type="info" Info="@reportService.Operator.NumberOfSamples.ToString()" />
+
+                <div class="d-flex flex-wrap flex-row align-items-center justify-content-between">
+
+                    <HalfSizeInput Label="通常" Type="info" Info="@reportService.Operator.NumberOfNormalSamples" />
+                    <HalfSizeInput Label="分割後残検体" Type="info" Info="@reportService.Operator.NumberOfRemainSamples" />
+                    <HalfSizeInput Label="再採便" Type="info" Info="@reportService.Operator.NumberOfRedoSamples" />
+                    <HalfSizeInput Label="再採便分割後残検体" Type="info"
+                        Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRedoRemainSamples)?"0":@reportService.Operator.NumberOfRedoRemainSamples)" />
+                    <HalfSizeInput Label="NC" Type="info" Info="@reportService.Operator.NumberOfNCSamples.ToString()" />
+                    <HalfSizeInput Label="ダミー" Type="info"
+                        Info="@reportService.Operator.NumberOfDummySamples.ToString()" />
+
+                </div>
+
+                <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
+
+                <h1 class="h4 my-3 fw-bold w-100 text-center text-white" style="opacity: var(--custom-text-alpha-a);">
+                    受付：検体処理者（3 hr）</h1>
+
+                @foreach (var pair in reportService.Logs)
+                {
+                    <FullSizeInput Label="@pair.Key" Type="info" Info="@pair.Value.ToString()" />
+                }
+
+            </div>
+
+            @* 作業開始
+                終了時刻
+                責任者
+                対象検体名
+                処理検体数
+
+                通常
+                分割後残検体
+                再採便
+                NC
+                ダミー
+
+                DNAトレイID
+                検体のトレイID位置情報
+
+                送信
+                DNAトレイID追加
+            *@
+
+            <button class="btn btn-lg w-100 text-white" style="background-color: var(--custom-primary-color);"
+                type="button">
+                送信
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
 
 
 @code {
-    private readonly string _dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+    @* private readonly string _dateTimeFormat = "yyyy-MM-dd HH:mm:ss"; *@
 
     protected override void OnInitialized()
     {

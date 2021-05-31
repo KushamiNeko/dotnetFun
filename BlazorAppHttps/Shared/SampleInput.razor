@@ -1,12 +1,19 @@
 <div class="mb-2">
 
-    <button type="button" class="btn btn-lg w-100 text-white mb-2"
-        style="background-color: var(--custom-primary-color);" @onclick="RemoveButtonClick">
-        削除
-    </button>
+    @if (Type == "info")
+    {
+        <FullSizeInput Label="DNAトレイID" Type="info" Info="@_trayID" />
+        <FullSizeInput Label="検体のトレイID位置情報" Type="info" Info="@_location" />
+    }
+    else
+    {
+        <button type="button" class="btn btn-lg w-100 text-white mb-2" style="background-color: var(--custom-primary-color);" @onclick="RemoveButtonClick">
+            削除
+        </button>
 
-    <FullSizeInput Label="DNAトレイID" @bind-Value="_trayID" />
-    <FullSizeInput Label="検体のトレイID位置情報" @bind-Value="_location" ValueChangedListener="OnLocationValueChanged" />
+        <FullSizeInput Label="DNAトレイID" @bind-Value="_trayID" />
+        <FullSizeInput Label="検体のトレイID位置情報" @bind-Value="_location" ValueChangedListener="OnLocationValueChanged" />
+    }
 
 </div>
 
@@ -19,12 +26,15 @@
             TrayIDChanged.InvokeAsync(value);
         }
     }
-    
+
     private string _location
     {
         get => Location;
         set => LocationChanged.InvokeAsync(value);
     }
+
+    [Parameter]
+    public string Type { get; set; }
 
     [Parameter]
     public string UID { get; set; }

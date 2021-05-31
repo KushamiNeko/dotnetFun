@@ -222,6 +222,12 @@ namespace BlazorAppHttps.Data
                                 return;
                             }
 
+                            if (startCol <= 0 || endCol <= 0)
+                            {
+                                InvalidMessage("無効な検体のトレイID位置情報の入力");
+                                return;
+                            }
+
                             // if (!match.Groups[1].Success || !match.Groups[2].Success)
                             // {
                             //     return;
@@ -254,6 +260,36 @@ namespace BlazorAppHttps.Data
                     }
                     else if (regexSingle.IsMatch(loct))
                     {
+                        MatchCollection matches = regexSingle.Matches(loct);
+
+                        foreach (Match match in matches)
+                        {
+                            // int row;
+                            int col;
+
+                            if (match.Groups["row"].Success && match.Groups["col"].Success)
+                            {
+                                // row = (int)match.Groups["row"].Value.ToCharArray()[0];
+                                col = Int32.Parse(match.Groups["col"].Value);
+                            }
+                            else if (match.Groups["row2"].Success && match.Groups["col2"].Success)
+                            {
+                                // row = (int)match.Groups["row2"].Value.ToCharArray()[0];
+                                col = Int32.Parse(match.Groups["col2"].Value);
+                            }
+                            else
+                            {
+                                InvalidMessage("無効な検体のトレイID位置情報の入力");
+                                return;
+                            }
+
+                            if (col <= 0)
+                            {
+                                InvalidMessage("無効な検体のトレイID位置情報の入力");
+                                return;
+                            }
+                        }
+
                         ntraySamples++;
                     }
                     else
