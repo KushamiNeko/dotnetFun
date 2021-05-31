@@ -1,0 +1,104 @@
+@* @using System; *@
+@using System.Threading;
+@* @using System.Threading.Tasks; *@
+
+<button class="position-relative custom-button progress w-100 p-0"
+    style="height: 5rem; background-color: var(--custom-primary-color);" @onmousedown="ButtonMouseDown"
+    @onmouseup="ButtonMouseUp" @ontouchstart="ButtonMouseDown" @ontouchend="ButtonMouseUp">
+    <div class="progress-bar h-100 fs-6"
+        style="width: @_progress%; background-color: @_progressColor; transition: width @(_delaySeconds)s linear, background-color @(_delaySeconds/2)s linear;"
+        role="progressbar" aria-valuenow="@_progress" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="fs-5 text-white position-absolute top-50 start-50 translate-middle">次のページ</div>
+</button>
+
+
+@code {
+
+    static private readonly float _defaultDelaySeconds = 2F;
+    static private readonly string _defaultProgressMessage = "press and hold for 2 seconds to go to the next page";
+
+    private float _delaySeconds = _defaultDelaySeconds;
+
+    private int _progress = 0;
+    private string _progressColor = "var(--custom-warning-color)";
+    private string _progressMessage = _defaultProgressMessage;
+
+    private CancellationTokenSource _tokenSource;
+
+    [Parameter]
+    public bool Active { get; set; } = false;
+
+    [Parameter]
+    public EventCallback ActivatedCallBack { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Console.WriteLine("delay button parameter set");
+
+        if (Active)
+        {
+            await StartPorgress();
+        }
+        else
+        {
+            if (_tokenSource != null)
+            {
+                CancelProgress();
+            }
+        }
+    }
+
+    private async Task ButtonMouseDown()
+    {
+        Active = true;
+        await StartPorgress();
+    }
+
+    private void ButtonMouseUp()
+    {
+        Active = false;
+        CancelProgress();
+    }
+
+    private async Task StartPorgress()
+    {
+        Console.WriteLine("delay btton start progress");
+
+        _delaySeconds = _defaultDelaySeconds;
+        _progress = 100;
+
+        _tokenSource = new CancellationTokenSource();
+
+
+        await Task.Delay((int)(_delaySeconds / 2 * 1000), _tokenSource.Token);
+
+        _progressColor = "var(--custom-error-color)";
+        @* _progressMessage = "you can not go back, are you sure!!"; *@
+
+        StateHasChanged();
+
+        await Task.Delay((int)(_delaySeconds / 2 * 1000), _tokenSource.Token);
+
+        Console.WriteLine("delay call back ready");
+
+        if (Active && ActivatedCallBack.HasDelegate)
+        {
+            Console.WriteLine("delay call back success");
+            await ActivatedCallBack.InvokeAsync(null);
+            @* CancelProgress();
+            StateHasChanged(); *@
+            @* ButtonMouseUp(); *@
+        }
+
+    }
+
+    private void CancelProgress()
+    {
+        _delaySeconds = 0F;
+        _progress = 0;
+        _progressColor = "var(--custom-warning-color)";
+        _progressMessage = _defaultProgressMessage;
+
+        _tokenSource.Cancel();
+    }
+}

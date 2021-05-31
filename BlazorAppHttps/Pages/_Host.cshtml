@@ -48,24 +48,33 @@
 
     <script>
 
-        let listener = null;
+        let keyDownListener = null;
+        let keyUpListener = null;
+
         let player = null;
 
-        window.addListener = (invoker) => {
-            if (listener !== null) {
+        window.oncontextmenu = function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        };
+
+        window.addKeyDownListener = (invoker) => {
+            if (keyDownListener !== null) {
                 return;
             }
 
-            console.log("add global listener");
+            console.log("add global key down listener");
 
 
-            listener = (event) => {
-                console.log(event.which);
-                if (player !== null) {
+            keyDownListener = (event) => {
+                @* console.log(event.which); *@
+
+                @* if (player !== null) {
                     player.pause();
-                }
+                } *@
 
-                invoker.invokeMethodAsync("keyboardHandler", event.which);
+                invoker.invokeMethodAsync("keyDownHandler", event.which);
             }
 
             //document.addEventListener("keydown", function (event) {
@@ -73,15 +82,44 @@
             //    invoker.invokeMethodAsync("Test", event.which);
             //});
 
-            document.addEventListener("keydown", listener);
-
+            document.addEventListener("keydown", keyDownListener);
         }
 
-        window.removeListener = () => {
-            if (listener !== null) {
-                console.log("remove global listener");
-                document.removeEventListener("keydown", listener);
+        window.addKeyUpListener = (invoker) => {
+            if (keyUpListener !== null) {
+                return;
             }
+
+            console.log("add global key up listener");
+
+
+            keyUpListener = (event) => {
+                @* console.log(event.which); *@
+
+                invoker.invokeMethodAsync("keyUpHandler", event.which);
+            }
+
+            //document.addEventListener("keydown", function (event) {
+            //    console.log(event.which);
+            //    invoker.invokeMethodAsync("Test", event.which);
+            //});
+
+            document.addEventListener("keyup", keyUpListener);
+        }
+
+        window.removeListeners = () => {
+            if (keyDownListener !== null) {
+                console.log("remove global key down listener");
+                document.removeEventListener("keydown", keyDownListener);
+            }
+
+            if (keyUpListener !== null) {
+                console.log("remove global key up listener");
+                document.removeEventListener("keyup", keyUpListener);
+            }
+
+            @* keyDownListener = null;
+            keyUpListener = null; *@
         }
 
         window.playAudio = (src) => {
@@ -91,11 +129,11 @@
             player.play();
         }
 
-       // window.stopAudio = () => {
-        //    if (player !== null) {
-        //        player.pause();
-       //     }
-        //}
+        window.stopAudio = () => {
+            if (player !== null) {
+                player.pause();
+            }
+        }
 
     </script>
 

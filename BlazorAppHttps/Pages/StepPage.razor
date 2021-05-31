@@ -1,4 +1,4 @@
-@page "/step/{StepId:int}"
+@* @page "/step/{StepId:int}" *@
 @page "/step"
 
 @inject IJSRuntime js
@@ -10,7 +10,16 @@
 
 @* <span class="d-block step-separator-xl"></span> *@
 
-<div class="page-container my-4 my-md-0">
+@if (StepId < 0)
+{
+    <ProtocolSummary Title="受付：検体処理者（3 hr）" Steps="@steps">
+    <DelayButton Active="@_isChangingPage" ActivatedCallBack="NextPage"></DelayButton>
+</ProtocolSummary>
+}
+else
+{
+
+    <div class="page-container my-0">
 
     @* <div class="container-fluid"> *@
     <div class="container-fluid p-0 m-0">
@@ -24,7 +33,7 @@
                 <div class="d-flex justify-content-center align-items-center w-75">
 
                     <div class="py-4 py-md-5">
-                    @* <div class="px-2 px-md-5"> *@
+                        @* <div class="px-2 px-md-5"> *@
 
                         <div class="mb-2">
                             <p class="h2 text-white ln-1 m-0" style="opacity: var(--custom-text-alpha-a);">
@@ -33,68 +42,93 @@
                                 </strong>
                             </p>
                             @* @if (!String.IsNullOrEmpty(@steps[StepId].Subtitle))
-                            {
+                                {
                                 <p class="h2 text-white ln-1 m-0" style="opacity: var(--custom-text-alpha-a);">
-                                    <strong>
-                                        
-                                    </strong>
+                                <strong>
+
+                                </strong>
                                 </p>
-                            } *@
+                                } *@
                         </div>
 
                         <ul>
                             @foreach (var description in steps[StepId].Descriptions)
-                            {
+                                {
 
-                                <li class="text-white lh-lg fs-5 m-0" style="opacity: var(--custom-text-alpha-b);">
-                                    @description</li>
-                            }
-                        </ul>
+                                    <li class="text-white lh-lg fs-5 m-0" style="opacity: var(--custom-text-alpha-b);">
+                                        @description</li>
+                                }
+                            </ul>
 
-                        @* <span class="d-block step-separator-xl"></span> *@
+                            @* <span class="d-block step-separator-xl"></span> *@
 
 
-                        @* @for (int i = 0; i < steps[StepId].Descriptions.Count; i++)
-                            {
+                            @* @for (int i = 0; i < steps[StepId].Descriptions.Count; i++)
+                                {
 
-                            <p class="page-description px-3">@steps[StepId].Descriptions[i]</p>
+                                <p class="page-description px-3">@steps[StepId].Descriptions[i]</p>
 
-                            if (i != steps[StepId].Descriptions.Count - 1)
-                            {
-                            <span class="d-block step-separator"></span>
-                            }
-                            } *@
+                                if (i != steps[StepId].Descriptions.Count - 1)
+                                {
+                                <span class="d-block step-separator"></span>
+                                }
+                                } *@
+                        </div>
+
                     </div>
 
                 </div>
 
+                @* <span class="d-block d-md-none mb-3 mb-sm-4 mb-md-5"></span> *@
+
+                <div class="d-flex col-md-6 justify-content-center align-items-center m-0 p-0 p-md-4"
+                style="background-color: black;">
+                    <img src="@imageSrc" class="w-100" style="object-fit: cover;" />
+                </div>
+
+                @* <div class="col-12 bg-dark" style="height: 3.5rem;"></div> *@
+                @* <div class="col-12 mb-3" style="height: 25px; background-color: var(--custom-primary-color);"></div> *@
+
+                @* <div class="col-12 mb-3" style="height: 3.5rem; background-color: var(--custom-primary-color);"></div> *@
+
+
+
             </div>
-
-            @* <span class="d-block d-md-none mb-3 mb-sm-4 mb-md-5"></span> *@
-
-            <div class="d-flex col-md-6 justify-content-center align-items-center m-0 p-0 p-md-4" style="background-color: black;">
-                <img src="@imageSrc" class="w-100" style="object-fit: cover;" />
-            </div>
-
-            @* <div class="col-12 bg-dark" style="height: 3.5rem;"></div> *@
-            @* <div class="col-12 mb-3" style="height: 25px; background-color: var(--custom-primary-color);"></div> *@
-            <div class="col-12 mb-3" style="height: 3.5rem; background-color: var(--custom-primary-color);"></div>
 
         </div>
-
     </div>
-</div>
+
+    <div class="progress w-100 rounded-0 border-0"
+    style="height: 3.5rem; background-color: var(--custom-bg-color-secondary);">
+        <div class="progress-bar fs-6" style="width: @progress%; background-color: var(--custom-secondary-color);"
+        role="progressbar" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">@progress%</div>
+    </div>
+
+    <DelayButton Active="@_isChangingPage" ActivatedCallBack="NextPage"></DelayButton>
+
+
+
+}
 
 
 @code {
-    [Parameter]
-    public int StepId { get; set; }
+
 
     private string imageSrc;
 
     private List<Step> steps;
 
     private DotNetObjectReference<StepPage> objectReference;
+
+    private int progress = 0;
+
+    private bool _isChangingPage = false;
+
+    private bool _pageHaveChanged = false;
+
+    @* [Parameter] *@
+    @* public int StepId { get; set; } *@
+    private int StepId = -1;
 
     protected override void OnInitialized()
     @* protected override async Task OnInitializedAsync() *@
@@ -107,75 +141,233 @@
         @* steps = await stepService.GetStepsAsync(); *@
 
         steps = stepService.Steps;
-        if (StepId >= steps.Count || StepId < 0)
-        {
+        @*if (StepId >= steps.Count || StepId < 0)
+            {
             NavigationManager.NavigateTo("/step/0");
-        }
+            } *@
+
         Console.WriteLine("init");
     }
 
-    protected override void OnParametersSet()
-    {
+    @* protected override void OnParametersSet()
+        {
         Console.WriteLine("parameter set");
         imageSrc = steps[StepId].Video;
-    }
+
+        progress = (int)(((float)(StepId + 1) / (float)steps.Count) * 100.0);
+        } *@
 
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         Console.WriteLine("render");
+
         if (firstRender)
         {
             Console.WriteLine("first render");
             objectReference = DotNetObjectReference.Create(this);
-            await js.InvokeVoidAsync("addListener", objectReference);
+            await js.InvokeVoidAsync("addKeyDownListener", objectReference);
+            await js.InvokeVoidAsync("addKeyUpListener", objectReference);
         }
 
-        if (!String.IsNullOrEmpty(steps[StepId].Audio))
+        @* await js.InvokeVoidAsync("addKeyDownListener", objectReference);
+            await js.InvokeVoidAsync("addKeyUpListener", objectReference); *@
+
+        @* if (!String.IsNullOrEmpty(steps[StepId].Audio))
         {
-            await js.InvokeVoidAsync("playAudio", steps[StepId].Audio);
+        await js.InvokeVoidAsync("playAudio", steps[StepId].Audio);
+        } *@
+    }
+
+    // public void keyDownHandler(int key)
+
+    [JSInvokable]
+    public async Task keyDownHandler(int key)
+    {
+        switch (key)
+        {
+            case 37:
+            // left arrow
+            @* break; *@
+            case 38:
+                // up arrow
+                await PreviousPage();
+                break;
+            case 39:
+            // right arrow
+            @* break; *@
+            case 40:
+                // down arrow
+                if (!_pageHaveChanged && !_isChangingPage)
+                {
+                    _isChangingPage = true;
+                    StateHasChanged();
+                }
+                break;
+            default:
+                break;
         }
     }
 
     [JSInvokable]
-    public void keyboardHandler(int key)
+    public void keyUpHandler(int key)
+    {
+        switch (key)
+        {
+            case 37:
+            // left arrow
+            @* break; *@
+            case 38:
+                // up arrow
+                break;
+            case 39:
+            // right arrow
+            @* break; *@
+            case 40:
+                // down arrow
+                _isChangingPage = false;
+                if (_pageHaveChanged == true)
+                {
+                    _pageHaveChanged = false;
+                }
+                StateHasChanged();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private async Task PreviousPage()
+    {
+        int newId = StepId - 1;
+        if (newId >= -1)
+        {
+            StepId = newId;
+
+            if (StepId >= 0)
+            {
+                _isChangingPage = false;
+                reportService.UndoStep(steps[StepId].Title);
+
+                await js.InvokeVoidAsync("stopAudio", steps[StepId].Audio);
+
+                imageSrc = steps[StepId].Video;
+                progress = (int)(((float)(StepId + 1) / (float)steps.Count) * 100.0);
+                await js.InvokeVoidAsync("playAudio", steps[StepId].Audio);
+
+            }
+
+            StateHasChanged();
+        }
+    }
+    private async Task NextPage()
+    {
+        if (StepId >= 0)
+        {
+            reportService.LogStep(steps[StepId].Title);
+        }
+
+        int newId = StepId + 1;
+        if (newId <= steps.Count - 1)
+        {
+            StepId = newId;
+
+            if (StepId >= 0)
+            {
+                _pageHaveChanged = true;
+                _isChangingPage = false;
+                await js.InvokeVoidAsync("stopAudio", steps[StepId].Audio);
+
+                imageSrc = steps[StepId].Video;
+                progress = (int)(((float)(StepId + 1) / (float)steps.Count) * 100.0);
+                await js.InvokeVoidAsync("playAudio", steps[StepId].Audio);
+            }
+
+            @* StateHasChanged(); *@
+        }
+        else if (newId == steps.Count)
+        {
+            _isChangingPage = false;
+            await js.InvokeVoidAsync("stopAudio", steps[StepId].Audio);
+
+            if (reportService.Operator == null)
+            {
+                NavigationManager.NavigateTo($"/");
+                return;
+            }
+
+            reportService.CompleteProtocol();
+            NavigationManager.NavigateTo($"/report");
+        }
+    }
+
+    @* public void keyboardHandler(int key) *@
+    public async Task keyboardHandler(int key)
     {
         int newId;
         switch (key)
         {
             case 37:
+                Console.WriteLine(key);
+
+                @* _isChangingPage = false;
+                    StateHasChanged(); *@
+
+
+                @* break; *@
                 newId = StepId - 1;
-                if (newId >= 0)
+                if (newId >= -1)
                 {
-                    reportService.UndoStep(steps[StepId].Title);
-                    NavigationManager.NavigateTo($"/step/{newId}");
+                    @* reportService.UndoStep(steps[StepId].Title);
+                        NavigationManager.NavigateTo($"/step/{newId}"); *@
+                    StepId = newId;
+
                 }
                 break;
 
             case 39:
-                reportService.LogStep(steps[StepId].Title);
+                Console.WriteLine(key);
+                @* _isChangingPage = true;
+                    StateHasChanged(); *@
+
+                @* break; *@
+                if (StepId >= 0)
+                {
+                    reportService.LogStep(steps[StepId].Title);
+                }
 
                 newId = StepId + 1;
                 if (newId <= steps.Count - 1)
                 {
-                    NavigationManager.NavigateTo($"/step/{newId}");
+                    StepId = newId;
+
+
+                    @* NavigationManager.NavigateTo($"/step/{newId}"); *@
                 }
                 else if (newId == steps.Count)
                 {
-                    if (reportService.Operator == null)
-                    {
+                    @* if (reportService.Operator == null)
+                        {
                         NavigationManager.NavigateTo($"/");
                         break;
-                    }
-                    reportService.CompleteProtocol();
-                    NavigationManager.NavigateTo($"/report");
+                        }
+                        reportService.CompleteProtocol(); *@
+                    @* NavigationManager.NavigateTo($"/report"); *@
                 }
 
                 break;
             default:
                 break;
-
         }
+
+        if (StepId >= 0)
+        {
+            imageSrc = steps[StepId].Video;
+            progress = (int)(((float)(StepId + 1) / (float)steps.Count) * 100.0);
+            await js.InvokeVoidAsync("playAudio", steps[StepId].Audio);
+        }
+        StateHasChanged();
     }
 
 
