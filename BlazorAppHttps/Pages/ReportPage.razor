@@ -26,7 +26,7 @@
 
             <div class="text-white mb-2">
 
-                <FullSizeInput Label="担当者" Type="info" Info="@reportService.Operator.Name" />
+                <FullSizeInput Label="担当者" Type="info" Info="@reportService.Operator.Name.Trim()" />
                 <FullSizeInput Label="開始時間" Type="info" Info="@reportService.Operator.ProtocolStart.ToString()" />
                 <FullSizeInput Label="終了時刻" Type="info" Info="@reportService.Operator.ProtocolEnd.ToString()" />
 
@@ -51,12 +51,20 @@
 
                 <div class="d-flex flex-wrap flex-row align-items-center justify-content-between">
 
-                    <HalfSizeInput Label="通常" Type="info" Info="@reportService.Operator.NumberOfNormalSamples" />
-                    <HalfSizeInput Label="分割後残検体" Type="info" Info="@reportService.Operator.NumberOfRemainSamples" />
-                    <HalfSizeInput Label="再採便" Type="info" Info="@reportService.Operator.NumberOfRedoSamples" />
+                    <HalfSizeInput Label="通常" Type="info"
+                        Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfNormalSamples)?"0":@reportService.Operator.NumberOfNormalSamples.Trim())" />
+
+                    <HalfSizeInput Label="分割後残検体" Type="info"
+                        Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRemainSamples)?"0":@reportService.Operator.NumberOfRemainSamples.Trim())" />
+
+                    <HalfSizeInput Label="再採便" Type="info"
+                        Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRedoSamples)?"0":@reportService.Operator.NumberOfRedoSamples.Trim())" />
+
                     <HalfSizeInput Label="再採便分割後残検体" Type="info"
-                        Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRedoRemainSamples)?"0":@reportService.Operator.NumberOfRedoRemainSamples)" />
+                        Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRedoRemainSamples)?"0":@reportService.Operator.NumberOfRedoRemainSamples.Trim())" />
+
                     <HalfSizeInput Label="NC" Type="info" Info="@reportService.Operator.NumberOfNCSamples.ToString()" />
+
                     <HalfSizeInput Label="ダミー" Type="info"
                         Info="@reportService.Operator.NumberOfDummySamples.ToString()" />
 
@@ -122,7 +130,7 @@
 
         if (firstRender)
         {
-            await js.InvokeVoidAsync("removeListener");
+            await js.InvokeVoidAsync("removeListeners");
         }
 
 

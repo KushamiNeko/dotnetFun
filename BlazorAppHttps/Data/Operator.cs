@@ -11,7 +11,7 @@ namespace BlazorAppHttps.Data
 
         // [Required]
         // [StringLength(10, ErrorMessage = "Name is too long.")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
         // [Required]
 
@@ -25,12 +25,12 @@ namespace BlazorAppHttps.Data
 
         // [Required]
 
-        public int NumberOfSamples { get; set; }
+        public int NumberOfSamples { get; set; } = 0;
 
-        public string NumberOfNormalSamples { get; set; }
-        public string NumberOfRemainSamples { get; set; }
-        public string NumberOfRedoSamples { get; set; }
-        public string NumberOfRedoRemainSamples { get; set; }
+        public string NumberOfNormalSamples { get; set; } = "";
+        public string NumberOfRemainSamples { get; set; } = "";
+        public string NumberOfRedoSamples { get; set; } = "";
+        public string NumberOfRedoRemainSamples { get; set; } = "";
         public int NumberOfNCSamples { get; } = 1;
         public int NumberOfDummySamples { get; set; } = 0;
 
@@ -66,11 +66,11 @@ namespace BlazorAppHttps.Data
 
             ErrorMessages.Clear();
 
-            IfInvalidMessage(String.IsNullOrEmpty(Name), "担当者が必要です");
+            IfInvalidMessage(String.IsNullOrEmpty(Name?.Trim()), "担当者を入力してください");
 
             if (DNATrayInputs.Count == 0)
             {
-                InvalidMessage("DNAトレイが必要です");
+                InvalidMessage("DNAトレイを入力してください");
             }
             else
             {
@@ -92,7 +92,7 @@ namespace BlazorAppHttps.Data
                 }
                 else
                 {
-                    InvalidMessage("無効な通常の入力");
+                    InvalidMessage("無効なサンプル数です");
                 }
             }
 
@@ -104,7 +104,7 @@ namespace BlazorAppHttps.Data
                 }
                 else
                 {
-                    InvalidMessage("無効な分割後残検体の入力");
+                    InvalidMessage("無効なサンプル数です");
                 }
             }
 
@@ -116,7 +116,7 @@ namespace BlazorAppHttps.Data
                 }
                 else
                 {
-                    InvalidMessage("無効な再採便の入力");
+                    InvalidMessage("無効なサンプル数です");
                 }
             }
 
@@ -128,7 +128,7 @@ namespace BlazorAppHttps.Data
                 }
                 else
                 {
-                    InvalidMessage("無効な再採便分割後残検体の入力");
+                    InvalidMessage("無効なサンプル数です");
                 }
             }
 
@@ -157,14 +157,28 @@ namespace BlazorAppHttps.Data
             // DNATrayInputs.ForEach((input) =>
             foreach (DNATrayInput input in DNATrayInputs)
             {
-                IfInvalidMessage(String.IsNullOrEmpty(input.TrayID) || !regexTrayID.IsMatch(input.TrayID), "DNAトレイIDが必要です");
+                if (String.IsNullOrEmpty(input.TrayID?.Trim()))
+                {
+                    InvalidMessage("DNAトレイIDを入力してください");
+                }
+                else
+                {
+                    // if (!regexTrayID.IsMatch(input.TrayID))
+                    // {
+                    //     InvalidMessage("無効なDNAトレイIDです");
+                    // }
+                    IfInvalidMessage(!regexTrayID.IsMatch(input.TrayID), "無効なDNAトレイIDです");
+                }
 
-                if (String.IsNullOrEmpty(input.Location) || !regexCheck.IsMatch(input.Location))
+                // IfInvalidMessage(String.IsNullOrEmpty(input.TrayID?.Trim()) || !regexTrayID.IsMatch(input.TrayID), "無効なDNAトレイIDです");
+                // IfInvalidMessage(String.IsNullOrEmpty(input.TrayID?.Trim()) || !regexTrayID.IsMatch(input.TrayID), "DNAトレイIDを入力してください");
+
+                if (String.IsNullOrEmpty(input.Location?.Trim()) || !regexCheck.IsMatch(input.Location))
                 {
                     // InputIsValid = false;
                     // ErrorMessages.Add("tray Location should not be empty");
 
-                    InvalidMessage("検体のトレイID位置情報が必要です");
+                    InvalidMessage("位置情報を入力してください");
                     return;
                 }
 
@@ -199,7 +213,7 @@ namespace BlazorAppHttps.Data
                             {
                                 // InputIsValid = false;
                                 // ErrorMessages.Add("tray Location format error");
-                                InvalidMessage("無効な検体のトレイID位置情報の入力");
+                                InvalidMessage("無効な位置情報です");
 
                                 return;
                             }
@@ -218,13 +232,13 @@ namespace BlazorAppHttps.Data
                             {
                                 // InputIsValid = false;
                                 // ErrorMessages.Add("tray Location format error");
-                                InvalidMessage("無効な検体のトレイID位置情報の入力");
+                                InvalidMessage("無効な位置情報です");
                                 return;
                             }
 
                             if (startCol <= 0 || endCol <= 0)
                             {
-                                InvalidMessage("無効な検体のトレイID位置情報の入力");
+                                InvalidMessage("無効な位置情報です");
                                 return;
                             }
 
@@ -250,7 +264,7 @@ namespace BlazorAppHttps.Data
                             {
                                 // InputIsValid = false;
                                 // ErrorMessages.Add("tray Location format error");
-                                InvalidMessage("無効な検体のトレイID位置情報の入力");
+                                InvalidMessage("無効な位置情報です");
                                 return;
                             }
 
@@ -279,13 +293,13 @@ namespace BlazorAppHttps.Data
                             }
                             else
                             {
-                                InvalidMessage("無効な検体のトレイID位置情報の入力");
+                                InvalidMessage("無効な位置情報です");
                                 return;
                             }
 
                             if (col <= 0)
                             {
-                                InvalidMessage("無効な検体のトレイID位置情報の入力");
+                                InvalidMessage("無効な位置情報です");
                                 return;
                             }
                         }
@@ -296,7 +310,7 @@ namespace BlazorAppHttps.Data
                     {
                         // InputIsValid = false;
                         // ErrorMessages.Add("tray Location format error");
-                        InvalidMessage("無効な検体のトレイID位置情報の入力");
+                        InvalidMessage("無効な位置情報です");
                     }
 
                 }

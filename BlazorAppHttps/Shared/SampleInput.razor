@@ -11,8 +11,8 @@
             削除
         </button>
 
-        <FullSizeInput Label="DNAトレイID" @bind-Value="_trayID" />
-        <FullSizeInput Label="検体のトレイID位置情報" @bind-Value="_location" ValueChangedListener="OnLocationValueChanged" />
+        <FullSizeInput Label="DNAトレイID" @bind-Value="_trayID" ValueChangedListener="OnLocationValueChanged" />
+        <FullSizeInput Label="位置情報" @bind-Value="_location" ValueChangedListener="OnLocationValueChanged" />
     }
 
 </div>
