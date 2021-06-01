@@ -7,16 +7,19 @@
 @inject StepService stepService
 @inject ReportService reportService
 
-@if (StepId < 0)
+
+@if (steps != null)
 {
-    <ProtocolSummary Title="受付：検体処理者（3 hr）" Steps="@steps">
+    @if (StepId < 0)
+    {
+        <ProtocolSummary Title="受付：検体処理者（3 hr）" Steps="@steps">
     <DelayButton Active="@_isChangingPage" ActivatedCallBack="NextPage"></DelayButton>
 </ProtocolSummary>
-}
-else
-{
+    }
+    else
+    {
 
-    <div class="page-container my-0">
+        <div class="page-container my-0">
 
     <div class="container-fluid p-0 m-0">
 
@@ -29,7 +32,8 @@ else
                     <div class="py-4 py-md-5">
 
                         <div class="mb-2">
-                            <p class="h2 text-white ln-1 m-0" style="opacity: var(--custom-text-alpha-a);">
+                            <p class="h2 text-white ln-1 m-0 user-select-none"
+                                style="opacity: var(--custom-text-alpha-a);">
                                 <strong>
                                     @steps[StepId].Title@steps[StepId].Subtitle
                                 </strong>
@@ -38,36 +42,46 @@ else
 
                         <ul>
                             @foreach (var description in steps[StepId].Descriptions)
-                                {
+                                    {
 
-                                    <li class="text-white lh-lg fs-5 m-0" style="opacity: var(--custom-text-alpha-b);">
-                                        @description</li>
-                                }
-                            </ul>
+                                        <li class="text-white lh-lg fs-5 m-0 user-select-none"
+                                style="opacity: var(--custom-text-alpha-b);">
+                                            @description</li>
+                                    }
+                                </ul>
+                            </div>
+
                         </div>
 
                     </div>
 
-                </div>
-
-                <div class="d-flex col-md-6 justify-content-center align-items-center m-0 p-0 p-md-4"
+                    <div class="d-flex col-md-6 justify-content-center align-items-center m-0 p-0 p-md-4"
                 style="background-color: black;">
-                    <img src="@imageSrc" class="w-100" style="object-fit: cover;" />
+                        <img src="@imageSrc" class="w-100 user-select-none" style="object-fit: cover;" />
+                    </div>
+
                 </div>
 
             </div>
-
         </div>
-    </div>
 
-    <div class="progress w-100 rounded-0 border-0"
+        <div class="progress w-100 rounded-0 border-0"
     style="height: 3.5rem; background-color: var(--custom-bg-color-secondary);">
-        <div class="progress-bar fs-6" style="width: @progress%; background-color: var(--custom-secondary-color);"
+            <div class="progress-bar fs-6" style="width: @progress%; background-color: var(--custom-secondary-color);"
         role="progressbar" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">@progress%</div>
+        </div>
+
+        <DelayButton Active="@_isChangingPage" ActivatedCallBack="NextPage"></DelayButton>
+
+    }
+}
+else
+{
+    <div class="d-flex justify-content-center m-5">
+    <div class="spinner-border text-white" style="width: 3.5rem; height: 3.5rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
     </div>
-
-    <DelayButton Active="@_isChangingPage" ActivatedCallBack="NextPage"></DelayButton>
-
+    </div>
 }
 
 @code {
@@ -87,26 +101,21 @@ else
 
     private int StepId = -1;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (reportService.Operator == null)
         {
             NavigationManager.NavigateTo($"/");
         }
 
-        steps = stepService.Steps;
-
-        @* Console.WriteLine("init"); *@
+        steps = await stepService.GetStepsWeb();
+        @* steps = await stepService.GetStepsLocal(); *@
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        @* Console.WriteLine("render"); *@
-
         if (firstRender)
         {
-            @* Console.WriteLine("first render"); *@
-
             objectReference = DotNetObjectReference.Create(this);
             await js.InvokeVoidAsync("addKeyDownListener", objectReference);
             await js.InvokeVoidAsync("addKeyUpListener", objectReference);
@@ -208,6 +217,8 @@ else
                 imageSrc = steps[StepId].Video;
                 progress = (int)(((float)(StepId + 1) / (float)steps.Count) * 100.0);
                 await js.InvokeVoidAsync("playAudio", steps[StepId].Audio);
+
+                StateHasChanged();
             }
         }
         else if (newId == steps.Count)
