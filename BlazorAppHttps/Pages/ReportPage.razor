@@ -5,17 +5,6 @@
 @using BlazorAppHttps.Data
 @inject ReportService reportService
 
-@* <h3>作業日誌</h3> *@
-
-@* <h2>Operator: @reportService.Operator?.Name</h2> *@
-@* <h2>Protocol Begin: @reportService.Operator?.ProtocolStart.ToString()</h2> *@
-@* <h2>Protocol Complete: @reportService.Operator?.ProtocolEnd.ToString()</h2> *@
-@* <h2>Sample ID From: @reportService.Operator?.StartPlateID</h2>
-    <h2>Sample ID To: @reportService.Operator?.EndPlateID</h2> *@
-@* <h2>Number of Samples: @reportService.Operator?.NumberOfSamples</h2> *@
-
-
-
 <div class="container d-flex justify-content-center my-5">
 
     <div class="form-container p-4 mx-3 mx-sm-0">
@@ -39,13 +28,6 @@
                 }
 
                 <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
-
-                @* <div class="mb-2">
-                    <button type="button" class="btn btn-lg w-100 text-white"
-                    style="background-color: var(--custom-primary-color);" @onclick="NewDNATray">
-                    DNAトレイID追加
-                    </button>
-                    </div> *@
 
                 <FullSizeInput Label="処理検体数" Type="info" Info="@reportService.Operator.NumberOfSamples.ToString()" />
 
@@ -82,25 +64,6 @@
 
             </div>
 
-            @* 作業開始
-                終了時刻
-                責任者
-                対象検体名
-                処理検体数
-
-                通常
-                分割後残検体
-                再採便
-                NC
-                ダミー
-
-                DNAトレイID
-                検体のトレイID位置情報
-
-                送信
-                DNAトレイID追加
-            *@
-
             <button class="btn btn-lg w-100 text-white" style="background-color: var(--custom-primary-color);"
                 type="button">
                 送信
@@ -114,11 +77,9 @@
 
 
 @code {
-    @* private readonly string _dateTimeFormat = "yyyy-MM-dd HH:mm:ss"; *@
-
     protected override void OnInitialized()
     {
-        Console.WriteLine("init report");
+        @* Console.WriteLine("init report"); *@
         if (reportService.Operator == null)
         {
             NavigationManager.NavigateTo($"/");
@@ -132,7 +93,6 @@
         {
             await js.InvokeVoidAsync("removeListeners");
         }
-
 
     }
 

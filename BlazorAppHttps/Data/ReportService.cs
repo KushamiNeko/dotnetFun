@@ -28,15 +28,13 @@ namespace BlazorAppHttps.Data
 
         private Dictionary<string, DateTime> _logs = new();
 
-        public void LogOperator(Operator op) {
+        public void LogOperator(Operator op)
+        {
             _operator = op;
         }
 
         public void UndoStep(string step)
         {
-            // _logs.Add(step, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            // Console.WriteLine(_logs[step]);
-
             _logs.Remove(step);
         }
 
@@ -53,7 +51,8 @@ namespace BlazorAppHttps.Data
 
         }
 
-        public void CompleteProtocol() {
+        public void CompleteProtocol()
+        {
             _operator.ProtocolEnd = DateTime.Now;
         }
     }
