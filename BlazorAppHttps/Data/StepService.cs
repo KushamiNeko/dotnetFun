@@ -31,7 +31,7 @@ namespace BlazorAppHttps.Data
 
             HttpClient client = new HttpClient();
 
-            Task<Stream> streamTask = client.GetStreamAsync("https://zutsukineko3339.blob.core.windows.net/$web/steps_web.json");
+            Task<Stream> streamTask = client.GetStreamAsync("https://yodareneko3339.blob.core.windows.net/$web/steps_web.json");
             List<Step> steps = await JsonSerializer.DeserializeAsync<List<Step>>(await streamTask);
 
             return steps;

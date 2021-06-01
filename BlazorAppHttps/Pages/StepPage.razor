@@ -210,6 +210,9 @@ else
 
             if (StepId >= 0)
             {
+                imageSrc = "";
+                StateHasChanged();
+
                 _pageHaveChanged = true;
                 _isChangingPage = false;
                 await js.InvokeVoidAsync("stopAudio", null);
