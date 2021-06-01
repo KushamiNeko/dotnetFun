@@ -42,18 +42,18 @@ namespace BlazorAppHttps.Data
         {
             if (!_logs.ContainsKey(step))
             {
-                _logs.Add(step, DateTime.Now);
+                _logs.Add(step, DateTimeOffset.UtcNow.AddHours(9.0).DateTime);
             }
             else
             {
-                _logs[step] = DateTime.Now;
+                _logs[step] = DateTimeOffset.UtcNow.AddHours(9.0).DateTime;
             }
 
         }
 
         public void CompleteProtocol()
         {
-            _operator.ProtocolEnd = DateTime.Now;
+            _operator.ProtocolEnd = DateTimeOffset.UtcNow.AddHours(9.0).DateTime;
         }
     }
 }

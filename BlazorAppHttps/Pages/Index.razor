@@ -79,7 +79,7 @@
 
     private Operator _operator = new Operator
     {
-        ProtocolStart = DateTime.Now,
+        ProtocolStart = DateTimeOffset.UtcNow.AddHours(9.0).DateTime,
     };
 
 
