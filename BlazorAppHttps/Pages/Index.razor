@@ -14,7 +14,7 @@
 
             <div class="text-white mb-2">
 
-                <FullSizeInput Label="開始時間" Type="info" Info="@_operator.ProtocolStart.ToString()" />
+                <FullSizeInput Label="開始時間" Type="info" Info="@_operator.ProtocolStart.ToString(_operator.TimeFormat)" />
                 <FullSizeInput Label="担当者" @bind-Value="_operator.Name" ValueChangedListener="ValidateInputs" />
 
                 <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>

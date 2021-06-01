@@ -7,6 +7,14 @@ namespace BlazorAppHttps.Data
 {
     public class Operator
     {
+        public string TimeFormat
+        {
+            get
+            {
+                return "yyyy/MM/dd HH:mm:ss";
+            }
+        }
+
         public string Name { get; set; } = "";
 
         public DateTime ProtocolStart { get; init; }

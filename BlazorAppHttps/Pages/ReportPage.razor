@@ -16,8 +16,8 @@
             <div class="text-white mb-2">
 
                 <FullSizeInput Label="担当者" Type="info" Info="@reportService.Operator.Name.Trim()" />
-                <FullSizeInput Label="開始時間" Type="info" Info="@reportService.Operator.ProtocolStart.ToString()" />
-                <FullSizeInput Label="終了時刻" Type="info" Info="@reportService.Operator.ProtocolEnd.ToString()" />
+                <FullSizeInput Label="開始時間" Type="info" Info="@reportService.Operator.ProtocolStart.ToString(reportService.Operator.TimeFormat)" />
+                <FullSizeInput Label="終了時刻" Type="info" Info="@reportService.Operator.ProtocolEnd.ToString(reportService.Operator.TimeFormat)" />
 
                 <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
 
@@ -59,7 +59,7 @@
 
                 @foreach (var pair in reportService.Logs)
                 {
-                    <FullSizeInput Label="@pair.Key" Type="info" Info="@pair.Value.ToString()" />
+                    <FullSizeInput Label="@pair.Key" Type="info" Info="@pair.Value.ToString(reportService.Operator.TimeFormat)" />
                 }
 
             </div>
