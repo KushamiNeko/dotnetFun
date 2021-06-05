@@ -19,7 +19,7 @@ namespace BlazorAppHttps.Data
         //     }
         // }
 
-        // private List<Step> _steps;
+        private List<Step> _steps = null;
 
         // public StepService()
         // {
@@ -29,23 +29,34 @@ namespace BlazorAppHttps.Data
         public async Task<List<Step>> GetStepsWeb()
         {
 
-            HttpClient client = new HttpClient();
+            if (_steps == null)
+            {
+                HttpClient client = new HttpClient();
 
-            Task<Stream> streamTask = client.GetStreamAsync("https://yodareneko3339.blob.core.windows.net/$web/steps_web.json");
-            List<Step> steps = await JsonSerializer.DeserializeAsync<List<Step>>(await streamTask);
+                Task<Stream> streamTask = client.GetStreamAsync("https://yodareneko3339.blob.core.windows.net/$web/steps_web.json");
+                // List<Step> steps = await JsonSerializer.DeserializeAsync<List<Step>>(await streamTask);
+                _steps = await JsonSerializer.DeserializeAsync<List<Step>>(await streamTask);
 
-            return steps;
+            }
+
+            // return steps;
+            return _steps;
         }
 
         public Task<List<Step>> GetStepsLocal()
         {
 
-            string content = File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), @"/wwwroot/steps.json"));
+            if (_steps == null)
+            {
+                string content = File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), @"/wwwroot/steps.json"));
 
-            List<Step> steps =
-                JsonSerializer.Deserialize<List<Step>>(content);
+                // List<Step> steps = JsonSerializer.Deserialize<List<Step>>(content);
+                _steps = JsonSerializer.Deserialize<List<Step>>(content);
 
-            return Task.FromResult(steps);
+            }
+
+            // return Task.FromResult(steps);
+            return Task.FromResult(_steps);
         }
     }
 }

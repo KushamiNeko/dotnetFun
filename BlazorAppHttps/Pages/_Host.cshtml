@@ -117,44 +117,40 @@
             }
         }
 
-        window.playVideo = (media) => {
-            console.log("play");
+        window.loadVideo = (media) => {
+            media.load();
+        }
 
+        window.playVideo = (media) => {
             media.play();
         }
 
         window.stopVideo = (media) => {
-            console.log("stop");
-
             media.pause();
         }
 
         window.restartVideo = (media) => {
-            console.log("restart");
-
-            @* media.pause(); *@
             media.currentTime = 0;
-            @* media.play(); *@
         }
 
         window.backStepVideo = (media) => {
-            console.log("backstep");
-            @* console.log(media.currentTime); *@
-
             const step = 2;
-
-            @* media.pause(); *@
 
             if (media.currentTime <= step) {
                 media.currentTime = 0;
             } else {
                 media.currentTime -= step;
             }
+        }
 
-            @* console.log(media.currentTime); *@
+        window.frontStepVideo = (media) => {
+            const step = 2;
 
-
-            @* media.play(); *@
+            if (media.currentTime > media.duration - step) {
+                media.currentTime = media.duration;
+            } else {
+                media.currentTime += step;
+            }
         }
 
     </script>
