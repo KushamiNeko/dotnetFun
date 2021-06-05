@@ -1,0 +1,86 @@
+@inject IJSRuntime js
+
+
+<div class="">
+    <video @ref="_video" class="w-100" controls autoplay loop muted tabindex="-1">
+        <source src="@Source" type="video/mp4">
+        <!-- fallback content here -->
+    </video>
+</div>
+
+<div class="w-100 mt-4">
+    <DelayButtonV2 @ref="_delayButton" Title="戻る" DelaySeconds="@_delayDuration" CanceledCallBack="CanceledCallBack"
+        ActivatedCallBack="ActivatedCallBack"></DelayButtonV2>
+</div>
+
+<div class="d-flex flex-row w-100 mt-2 text-white justify-content-between user-select-none fs-6">
+    <span></span>
+    <span>2秒戻る |</span>
+    <span>最初に戻る |</span>
+</div>
+
+
+@code {
+    private double _delayDuration = 0.5;
+
+    private ElementReference _video;
+
+    private DelayButtonV2 _delayButton;
+
+    [Parameter]
+    public string Source { get; set; }
+
+
+    private async Task CanceledCallBack(double duration)
+    {
+        if ((duration >= _delayDuration / 2.0) && duration < _delayDuration)
+        {
+            await BackStepVideo();
+        }
+    }
+
+    private async Task ActivatedCallBack()
+    {
+        await RestartVideo();
+    }
+
+    public async Task KeyboardDown()
+    {
+        await _delayButton.KeyboardDown();
+    }
+
+    public async Task KeyboardUp()
+    {
+        await _delayButton.KeyboardUp();
+    }
+
+    public async Task ButtonMouseDown()
+    {
+        await _delayButton.ButtonMouseDown();
+    }
+
+    public async Task ButtonMouseUp()
+    {
+        await _delayButton.ButtonMouseUp();
+    }
+
+    public async Task PlayVideo()
+    {
+        await js.InvokeVoidAsync("playVideo", _video);
+    }
+
+    public async Task StopVideo()
+    {
+        await js.InvokeVoidAsync("stopVideo", _video);
+    }
+
+    public async Task RestartVideo()
+    {
+        await js.InvokeVoidAsync("restartVideo", _video);
+    }
+
+    public async Task BackStepVideo()
+    {
+        await js.InvokeVoidAsync("backStepVideo", _video);
+    }
+}

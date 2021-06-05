@@ -1,0 +1,156 @@
+@using System.Threading;
+
+<button class="position-relative no-focus progress w-100 p-0"
+    style="height: @(Height); background-color: @(BackgroundColor);" @onmousedown="ButtonMouseDown"
+    @onmouseup="ButtonMouseUp" @ontouchstart="ButtonMouseDown" @ontouchend="ButtonMouseUp">
+    <div class="progress-bar h-100 fs-6"
+        style="width: @(_progress)%; background-color: @(_progressColor); transition: width @(_delaySeconds)s linear, background-color @(_delaySeconds/2)s linear;"
+        role="progressbar" aria-valuenow="@_progress" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="fs-5 text-white position-absolute top-50 start-50 translate-middle user-select-none">@Title</div>
+</button>
+
+
+@code {
+
+    [Parameter]
+    public string Height { get; set; } = "5rem";
+
+    [Parameter]
+    public double DelaySeconds { get; set; } = 2.0;
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string BackgroundColor { get; set; } = "var(--custom-primary-color)";
+
+    [Parameter]
+    public string StartColor { get; set; } = "var(--custom-warning-color)";
+
+    [Parameter]
+    public string EndColor { get; set; } = "var(--custom-error-color)";
+
+    private double _delaySeconds;
+
+    private int _progress = 0;
+
+    private string _progressColor = "var(--custom-warning-color)";
+
+    private CancellationTokenSource _tokenSource;
+
+    private bool _active = false;
+
+    private long _unixTimeMillisecondsMark = 0;
+
+    private bool _keyboardActivated = false;
+
+    [Parameter]
+    public EventCallback ActivatedCallBack { get; set; }
+
+    [Parameter]
+    public EventCallback<double> CanceledCallBack { get; set; }
+
+    public async Task KeyboardDown()
+    {
+
+        await ButtonMouseDown();
+        _keyboardActivated = true;
+    }
+
+    public async Task KeyboardUp()
+    {
+
+        await ButtonMouseUp();
+        _keyboardActivated = false;
+    }
+
+    public async Task ButtonMouseDown()
+    {
+        if (!_active)
+        {
+            _active = true;
+            await StartPorgress();
+        }
+    }
+
+    public async Task ButtonMouseUp()
+    {
+        if (_active)
+        {
+            _active = false;
+            await CancelProgress();
+        }
+
+    }
+
+    private async Task ChangeProgressColor(CancellationToken token)
+    {
+        await Task.Delay((int)(_delaySeconds / 2 * 1000), token);
+        _progressColor = EndColor;
+        StateHasChanged();
+    }
+
+    private async Task StartPorgress()
+    {
+        if (_keyboardActivated)
+        {
+            return;
+        }
+
+        _unixTimeMillisecondsMark = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        _delaySeconds = DelaySeconds;
+        _progressColor = StartColor;
+        _progress = 100;
+
+        StateHasChanged();
+
+        _tokenSource = new CancellationTokenSource();
+
+        Task t = ChangeProgressColor(_tokenSource.Token);
+
+        await Task.Delay((int)(_delaySeconds * 1000), _tokenSource.Token);
+
+        if (_active && ActivatedCallBack.HasDelegate)
+        {
+            await ActivatedCallBack.InvokeAsync(null);
+        }
+
+        if (!t.IsCanceled && !t.IsCompleted)
+        {
+            t.Wait();
+        }
+
+        if (_active)
+        {
+            @* await Task.Delay(100, _tokenSource.Token); *@
+            await ButtonMouseUp();
+        }
+
+    }
+
+    private async Task CancelProgress()
+    {
+        _delaySeconds = 0.0;
+
+        _progress = 0;
+        _progressColor = StartColor;
+
+        _tokenSource.Cancel();
+
+
+        long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        long diff = now - _unixTimeMillisecondsMark;
+        double diffSeconds = (double)diff / 1000.0;
+
+        if (diffSeconds < DelaySeconds)
+        {
+            if (CanceledCallBack.HasDelegate)
+            {
+                await CanceledCallBack.InvokeAsync(diffSeconds);
+            }
+        }
+
+        StateHasChanged();
+    }
+}

@@ -13,7 +13,9 @@
     @if (StepId < 0)
     {
         <ProtocolSummary Title="受付：検体処理者（3 hr）" Steps="@steps">
-    <DelayButton Active="@_isChangingPage" ActivatedCallBack="NextPage"></DelayButton>
+    @* <DelayButton Active="@_isChangingPage" ActivatedCallBack="NextPage"></DelayButton> *@
+    <DelayButtonV2 @ref="_delayButton" Title="次へ" DelaySeconds="2" ActivatedCallBack="NextPage"></DelayButtonV2>
+
 </ProtocolSummary>
     }
     else
@@ -55,9 +57,10 @@
 
                     </div>
 
-                    <div class="d-flex col-md-6 justify-content-center align-items-center m-0 p-0 p-md-4"
+                    <div class="d-flex flex-column col-md-6 justify-content-center align-items-center m-0 p-0 p-md-4"
                 style="background-color: black;">
                         <img src="@imageSrc" class="w-100 user-select-none" style="object-fit: cover;" />
+                        @* <VideoPlayer @ref="_videoPlayer" Source="video/3.mp4"></VideoPlayer> *@
                     </div>
 
                 </div>
@@ -71,9 +74,13 @@
         role="progressbar" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">@progress%</div>
         </div>
 
-        <DelayButton Active="@_isChangingPage" ActivatedCallBack="NextPage"></DelayButton>
+        @* <DelayButton Active="@_isChangingPage" ActivatedCallBack="NextPage"></DelayButton> *@
+        <DelayButtonV2 @ref="_delayButton" Title="次へ" DelaySeconds="2" ActivatedCallBack="NextPage"></DelayButtonV2>
 
     }
+
+    @* <DelayButtonV2 @ref="_delayButton" Title="次へ" DelaySeconds="2" ActivatedCallBack="NextPage"></DelayButtonV2> *@
+
 }
 else
 {
@@ -81,7 +88,7 @@ else
     <div class="spinner-border text-white" style="width: 3.5rem; height: 3.5rem;" role="status">
         <span class="visually-hidden">Loading...</span>
     </div>
-    </div>
+</div>
 }
 
 @code {
@@ -95,21 +102,27 @@ else
 
     private int progress = 0;
 
-    private bool _isChangingPage = false;
+    @* private bool _isChangingPage = false; *@
 
-    private bool _pageHaveChanged = false;
+    @* private bool _keyboardActivated = false; *@
 
     private int StepId = -1;
+    @* private int StepId = 0; *@
+
+    private VideoPlayer _videoPlayer;
+
+    private DelayButtonV2 _delayButton;
 
     protected override async Task OnInitializedAsync()
     {
-        if (reportService.Operator == null)
-        {
+        @* if (reportService.Operator == null)
+            {
             NavigationManager.NavigateTo($"/");
-        }
+            } *@
 
-        steps = await stepService.GetStepsWeb();
-        @* steps = await stepService.GetStepsLocal(); *@
+        @* steps = await stepService.GetStepsWeb(); *@
+        steps = await stepService.GetStepsLocal();
+        @* imageSrc = steps[StepId].Video; *@
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -122,8 +135,9 @@ else
         }
     }
 
+    @* public void keyDownHandler(int key) *@
     [JSInvokable]
-    public void keyDownHandler(int key)
+    public async Task keyDownHandler(int key)
     {
         switch (key)
         {
@@ -131,15 +145,22 @@ else
             case 37:
             case 38:
                 @* await PreviousPage(); *@
+                await _videoPlayer.KeyboardDown();
                 break;
 
             case 39:
             case 40:
-                if (!_pageHaveChanged && !_isChangingPage)
+                await _delayButton.KeyboardDown();
+                @* if (!_keyboardActivated)
                 {
+                    _keyboardActivated = true;
+                } *@
+
+                @* if (!_keyboardActivated && !_isChangingPage)
+                    {
                     _isChangingPage = true;
                     StateHasChanged();
-                }
+                    } *@
                 break;
 
             default:
@@ -148,7 +169,7 @@ else
     }
 
     [JSInvokable]
-    public void keyUpHandler(int key)
+    public async Task keyUpHandler(int key)
     {
         switch (key)
         {
@@ -158,16 +179,18 @@ else
             // 40 down arrow
             case 37:
             case 38:
+                await _videoPlayer.KeyboardUp();
                 break;
 
             case 39:
             case 40:
-                _isChangingPage = false;
-                if (_pageHaveChanged == true)
+                @* _isChangingPage = false; *@
+                await _delayButton.KeyboardUp();
+                @* if (_keyboardActivated)
                 {
-                    _pageHaveChanged = false;
-                }
-                StateHasChanged();
+                    _keyboardActivated = false;
+                } *@
+                @* StateHasChanged(); *@
                 break;
 
             default:
@@ -185,7 +208,7 @@ else
 
             if (StepId >= 0)
             {
-                _isChangingPage = false;
+                @* _isChangingPage = false; *@
                 reportService.UndoStep(steps[StepId].Title);
 
                 imageSrc = steps[StepId].Video;
@@ -198,6 +221,11 @@ else
     }
     private async Task NextPage()
     {
+        @* if (_keyboardActivated)
+        {
+            return;
+        } *@
+
         if (StepId >= 0)
         {
             reportService.LogStep(steps[StepId].Title);
@@ -213,8 +241,9 @@ else
                 imageSrc = "";
                 StateHasChanged();
 
-                _pageHaveChanged = true;
-                _isChangingPage = false;
+                @* _keyboardActivated = true; *@
+
+                @* _isChangingPage = false; *@
                 await js.InvokeVoidAsync("stopAudio", null);
 
                 imageSrc = steps[StepId].Video;
@@ -226,7 +255,7 @@ else
         }
         else if (newId == steps.Count)
         {
-            _isChangingPage = false;
+            @* _isChangingPage = false; *@
             await js.InvokeVoidAsync("stopAudio", null);
 
             if (reportService.Operator == null)

@@ -117,6 +117,46 @@
             }
         }
 
+        window.playVideo = (media) => {
+            console.log("play");
+
+            media.play();
+        }
+
+        window.stopVideo = (media) => {
+            console.log("stop");
+
+            media.pause();
+        }
+
+        window.restartVideo = (media) => {
+            console.log("restart");
+
+            @* media.pause(); *@
+            media.currentTime = 0;
+            @* media.play(); *@
+        }
+
+        window.backStepVideo = (media) => {
+            console.log("backstep");
+            @* console.log(media.currentTime); *@
+
+            const step = 2;
+
+            @* media.pause(); *@
+
+            if (media.currentTime <= step) {
+                media.currentTime = 0;
+            } else {
+                media.currentTime -= step;
+            }
+
+            @* console.log(media.currentTime); *@
+
+
+            @* media.play(); *@
+        }
+
     </script>
 
 </body>
