@@ -86,8 +86,6 @@
                     <div class="d-flex flex-column col-md-6 justify-content-center align-items-center m-0 p-0 p-md-4"
                 style="background-color: black;">
 
-                        @* <img src="@imageSrc" class="w-100 user-select-none" style="object-fit: cover;" /> *@
-
                         <VideoPlayer @ref="_videoPlayer" Source="@(_videoSrc)"></VideoPlayer>
 
                     </div>
@@ -102,11 +100,10 @@
     <div class="progress w-100 rounded-0 border-0"
     style="height: 3.5rem; background-color: var(--custom-bg-color-secondary);">
 
-        <div class="progress-bar fs-6" style="width: @progress%; background-color: var(--custom-secondary-color);"
+        <div class="progress-bar fs-6 user-select-none" style="width: @progress%; background-color: var(--custom-secondary-color);"
         role="progressbar" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">@progress%</div>
     </div>
 
-    @* <DelayButton Active="@_isChangingPage" ActivatedCallBack="NextPage"></DelayButton> *@
     <DelayButtonV2 @ref="_delayButton" Title="次へ" DelaySeconds="2" ActivatedCallBack="NextPage">
 </DelayButtonV2>
 
@@ -122,8 +119,6 @@ else
 
 @code {
 
-
-    @* private string imageSrc; *@
     private string _videoSrc;
 
     private List<Step> steps;
@@ -141,13 +136,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        @* if (reportService.Operator == null)
-            {
+        if (reportService.Operator == null)
+        {
             NavigationManager.NavigateTo($"/");
-            } *@
+        }
 
-        @* steps = await stepService.GetStepsWeb(); *@
-        steps = await stepService.GetStepsLocal();
+        steps = await stepService.GetStepsWeb();
+        @* steps = await stepService.GetStepsLocal(); *@
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -240,9 +235,6 @@ else
 
             if (StepId >= 0)
             {
-                @* imageSrc = "black.png";
-                    StateHasChanged(); *@
-
                 await js.InvokeVoidAsync("stopAudio", null);
 
                 _videoSrc = steps[StepId].Video;

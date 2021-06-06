@@ -2,7 +2,7 @@
 
 
 <div class="d-flex my-3 my-md-0">
-    <video @ref="_video" class="w-100" controls autoplay loop muted tabindex="-1" poster="black.png">
+    <video @ref="_video" class="w-100" controls autoplay loop muted tabindex="-1" poster="black.png" controlslist="nodownload">
         <source src="@Source" type="video/mp4">
         <!-- fallback content here -->
     </video>
@@ -15,8 +15,8 @@
 
 <div
     class="d-flex flex-row w-100 my-1 my-md-0 mt-md-2 px-1 px-md-0 text-white justify-content-between user-select-none fs-6">
-    <span>| 一時停止</span>
-    <span>2秒戻る |</span>
+    <span>一時停止 |</span>
+    <span>少し戻る |</span>
     <span>最初に戻る |</span>
 </div>
 
@@ -33,16 +33,8 @@
     [Parameter]
     public string Source { get; set; }
 
-    @* protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-        await js.InvokeVoidAsync("loadVideo", _video);
-        } *@
-
-
     private async Task CanceledCallBack(double duration)
     {
-        @* Console.WriteLine(duration); *@
-
         if ((duration >= _delayDuration / 2.0) && duration < _delayDuration)
         {
             await BackStepVideo();
