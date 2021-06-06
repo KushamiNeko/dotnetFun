@@ -170,12 +170,18 @@ else
             case 37:
             case 38:
                 @* await PreviousPage(); *@
-                await _videoPlayer.KeyboardDown();
+                if (_videoPlayer != null)
+                {
+                    await _videoPlayer.KeyboardDown();
+                }
                 break;
 
             case 39:
             case 40:
-                await _delayButton.KeyboardDown();
+                if (_delayButton != null)
+                {
+                    await _delayButton.KeyboardDown();
+                }
                 break;
 
             default:
@@ -194,12 +200,18 @@ else
             // 40 down arrow
             case 37:
             case 38:
-                await _videoPlayer.KeyboardUp();
+                if (_videoPlayer != null)
+                {
+                    await _videoPlayer.KeyboardUp();
+                }
                 break;
 
             case 39:
             case 40:
-                await _delayButton.KeyboardUp();
+                if (_delayButton != null)
+                {
+                    await _delayButton.KeyboardUp();
+                }
                 break;
 
             default:

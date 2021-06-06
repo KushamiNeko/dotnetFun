@@ -143,7 +143,7 @@
         window.backStepVideo = (media) => {
             // console.log("backstep");
 
-            const step = 2;
+            const step = 3;
 
             if (media.currentTime <= step) {
                 media.currentTime = 0;
@@ -155,7 +155,7 @@
         window.frontStepVideo = (media) => {
             // console.log("frontstep");
 
-            const step = 2;
+            const step = 3;
 
             if (media.currentTime > media.duration - step) {
                 media.currentTime = media.duration;
