@@ -33,14 +33,16 @@
     [Parameter]
     public string Source { get; set; }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
+    @* protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
         await js.InvokeVoidAsync("loadVideo", _video);
-    }
+        } *@
 
 
     private async Task CanceledCallBack(double duration)
     {
+        @* Console.WriteLine(duration); *@
+
         if ((duration >= _delayDuration / 2.0) && duration < _delayDuration)
         {
             await BackStepVideo();
@@ -83,6 +85,11 @@
     public async Task ButtonMouseUp()
     {
         await _delayButton.ButtonMouseUp();
+    }
+
+    public async Task LoadVideo()
+    {
+        await js.InvokeVoidAsync("loadVideo", _video);
     }
 
     public async Task PlayVideo()

@@ -148,7 +148,6 @@ else
 
         @* steps = await stepService.GetStepsWeb(); *@
         steps = await stepService.GetStepsLocal();
-        @* imageSrc = steps[StepId].Video; *@
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -242,15 +241,18 @@ else
             if (StepId >= 0)
             {
                 @* imageSrc = "black.png";
-                StateHasChanged(); *@
+                    StateHasChanged(); *@
 
                 await js.InvokeVoidAsync("stopAudio", null);
 
                 _videoSrc = steps[StepId].Video;
                 progress = (int)(((float)(StepId + 1) / (float)steps.Count) * 100.0);
+
                 await js.InvokeVoidAsync("playAudio", steps[StepId].Audio);
 
                 StateHasChanged();
+
+                await _videoPlayer.LoadVideo();
             }
         }
         else if (newId == steps.Count)

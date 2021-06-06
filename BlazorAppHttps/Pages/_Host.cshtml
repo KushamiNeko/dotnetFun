@@ -118,22 +118,31 @@
         }
 
         window.loadVideo = (media) => {
+            // console.log("load");
+
             media.load();
         }
 
         window.playVideo = (media) => {
+            // console.log("play");
             media.play();
         }
 
         window.stopVideo = (media) => {
+            // console.log("stop");
+
             media.pause();
         }
 
         window.restartVideo = (media) => {
+            // console.log("restart");
+
             media.currentTime = 0;
         }
 
         window.backStepVideo = (media) => {
+            // console.log("backstep");
+
             const step = 2;
 
             if (media.currentTime <= step) {
@@ -144,6 +153,8 @@
         }
 
         window.frontStepVideo = (media) => {
+            // console.log("frontstep");
+
             const step = 2;
 
             if (media.currentTime > media.duration - step) {
