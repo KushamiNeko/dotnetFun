@@ -16,10 +16,10 @@
 
     <div class="container-fluid p-0 m-0 d-flex flex-column align-items-center">
 
-        <div class="px-5 d-flex align-items-center" style="min-height: 700px;">
+        <div class="px-5 d-flex align-items-center" style="min-height: 600px;">
 
 
-            <div class="py-4 py-md-5 d-flex flex-column align-items-center">
+            <div class="py-4 py-md-4 d-flex flex-column align-items-center">
                 <h1 class="h2 mb-3 ln-1 text-white user-select-none" style="opacity: var(--custom-text-alpha-a);">
                     受付：検体処理者（3
                     hr）</h1>
@@ -51,13 +51,13 @@
 
     <div class="container-fluid p-0 m-0">
 
-        <div class="d-flex flex-wrap flex-row p-0 m-0 justify-content-center">
+        <div class="d-flex flex-wrap flex-row p-0 m-0 justify-content-center" style="min-height: 600px;">
 
             <div class="d-flex col-md-6 px-0 align-middle justify-content-center">
 
                 <div class="d-flex justify-content-center align-items-center w-75">
 
-                    <div class="py-4 py-md-5">
+                    <div class="py-4 py-md-4">
 
                         <div class="mb-2">
                             <p class="h2 text-white ln-1 m-0 user-select-none"
@@ -100,8 +100,9 @@
     <div class="progress w-100 rounded-0 border-0"
     style="height: 3.5rem; background-color: var(--custom-bg-color-secondary);">
 
-        <div class="progress-bar fs-6 user-select-none" style="width: @progress%; background-color: var(--custom-secondary-color);"
-        role="progressbar" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">@progress%</div>
+        <div class="progress-bar fs-6 user-select-none"
+        style="width: @progress%; background-color: var(--custom-secondary-color);" role="progressbar"
+        aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">@progress%</div>
     </div>
 
     <DelayButtonV2 @ref="_delayButton" Title="次へ" DelaySeconds="2" ActivatedCallBack="NextPage">
@@ -143,6 +144,11 @@ else
 
         steps = await stepService.GetStepsWeb();
         @* steps = await stepService.GetStepsLocal(); *@
+
+        if (steps != null && StepId < 0)
+        {
+            await js.InvokeVoidAsync("playAudio", "https://yodareneko3339.blob.core.windows.net/$web/2.mp3");
+        }
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
