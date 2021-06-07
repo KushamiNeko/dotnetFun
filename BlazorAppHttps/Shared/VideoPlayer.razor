@@ -81,6 +81,7 @@
 
     public async Task LoadVideo()
     {
+        _videoPaused = false;
         await js.InvokeVoidAsync("loadVideo", _video);
     }
 
