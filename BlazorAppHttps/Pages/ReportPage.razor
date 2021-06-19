@@ -10,7 +10,7 @@
     <div class="form-container p-4 mx-3 mx-sm-0">
 
         <h1 class="h2 mb-3 fw-bold w-100 text-center text-white" style="opacity: var(--custom-text-alpha-a);">作業日誌</h1>
-        
+
         <h1 class="h4 mb-3 w-100 text-center text-white" style="opacity: var(--custom-text-alpha-a);">@_reportService.Protocol.Title</h1>
 
         <form>
@@ -34,42 +34,7 @@
                     <DnaTrayInput Type="info" Info="@_reportService.Inputs.KeyValue"></DnaTrayInput>
                 }
 
-                @* @foreach (var input in _reportService.Operator.DNATrayInputs) *@
-                @* { *@
-                @*     <SampleInput Uid="@input.Uid" Type="info" @bind-TrayID="input.TrayID" @bind-Location="input.Location"> *@
-                @*     </SampleInput> *@
-                @* } *@
-                @* *@
-                @* <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div> *@
-                @* *@
-                @* <FullSizeInput Label="処理検体数" Type="info" Info="@reportService.Operator.NumberOfSamples.ToString()"/> *@
-                @* *@
-                @* <div class="d-flex flex-wrap flex-row align-items-center justify-content-between"> *@
-                @* *@
-                @*     <HalfSizeInput Label="通常" Type="info" *@
-                @*                    Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfNormalSamples) ? "0" : @reportService.Operator.NumberOfNormalSamples.Trim())"/> *@
-                @* *@
-                @*     <HalfSizeInput Label="分割後残検体" Type="info" *@
-                @*                    Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRemainSamples) ? "0" : @reportService.Operator.NumberOfRemainSamples.Trim())"/> *@
-                @* *@
-                @*     <HalfSizeInput Label="再採便" Type="info" *@
-                @*                    Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRedoSamples) ? "0" : @reportService.Operator.NumberOfRedoSamples.Trim())"/> *@
-                @* *@
-                @*     <HalfSizeInput Label="再採便分割後残検体" Type="info" *@
-                @*                    Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRedoRemainSamples) ? "0" : @reportService.Operator.NumberOfRedoRemainSamples.Trim())"/> *@
-                @* *@
-                @*     <HalfSizeInput Label="NC" Type="info" Info="@reportService.Operator.NumberOfNCSamples.ToString()"/> *@
-                @* *@
-                @*     <HalfSizeInput Label="ダミー" Type="info" *@
-                @*                    Info="@reportService.Operator.NumberOfDummySamples.ToString()"/> *@
-                @* *@
-                @* </div> *@
-
                 <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
-
-                @* <h1 class="h4 my-3 fw-bold w-100 text-center text-white" style="opacity: var(--custom-text-alpha-a);"> *@
-                @*     @_reportService.Protocol.Title *@
-                @* </h1> *@
 
                 @foreach (var pair in _reportService.Logs)
                 {

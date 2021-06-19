@@ -124,8 +124,7 @@ else
     private int _progress = 0;
 
     private int _stepId = -1;
-        @* private int StepId = 0; *@
-
+        
     private VideoPlayer _videoPlayer;
 
     private DelayButtonV2 _delayButton;
@@ -212,24 +211,34 @@ else
         }
     }
 
+    private async Task RefreshPage()
+    {
+        if (_stepId >= 0)
+        {
+            await _jsRuntime.InvokeVoidAsync("stopAudio", null);
+
+            _videoSrc = string.IsNullOrEmpty(_steps[_stepId].VideoUrl) ? "" :_steps[_stepId].VideoUrl;
+                
+            _progress = (int) (((double) (_stepId + 1) / (double) _steps.Count) * 100.0);
+
+            if (!string.IsNullOrEmpty(_steps[_stepId].AudioUrl))
+            {
+                await _jsRuntime.InvokeVoidAsync("playAudio", _steps[_stepId].AudioUrl);
+            }
+
+            StateHasChanged();
+
+            await _videoPlayer.LoadVideo();
+        }
+    }
+
     private async Task PreviousPage()
     {
         int newId = _stepId - 1;
         if (newId >= -1)
         {
             _stepId = newId;
-            await _jsRuntime.InvokeVoidAsync("stopAudio", null);
-
-            if (_stepId >= 0)
-            {
-                _reportService.UndoStep(_steps[_stepId].Title);
-
-                _videoSrc = _steps[_stepId].VideoUrl;
-                _progress = (int) (((double) (_stepId + 1) / (double) _steps.Count) * 100.0);
-                await _jsRuntime.InvokeVoidAsync("playAudio", _steps[_stepId].AudioUrl);
-            }
-
-            StateHasChanged();
+            await RefreshPage();
         }
     }
 
@@ -244,20 +253,7 @@ else
         if (newId <= _steps.Count - 1)
         {
             _stepId = newId;
-
-            if (_stepId >= 0)
-            {
-                await _jsRuntime.InvokeVoidAsync("stopAudio", null);
-
-                _videoSrc = _steps[_stepId].VideoUrl;
-                _progress = (int) (((float) (_stepId + 1) / (float) _steps.Count) * 100.0);
-
-                await _jsRuntime.InvokeVoidAsync("playAudio", _steps[_stepId].AudioUrl);
-
-                StateHasChanged();
-
-                await _videoPlayer.LoadVideo();
-            }
+            await RefreshPage();
         }
         else if (newId == _steps.Count)
         {

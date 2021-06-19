@@ -33,40 +33,7 @@
                 }
 
                 <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
-
-                @* @foreach (var input in _operator.DNATrayInputs) *@
-                @* { *@
-                @*     <SampleInput UID="@input.UID" RemoveInput="RemoveDnaTray" LocationValueChangedListener="ValidateInputs" *@
-                @*                  @bind-TrayID="input.TrayID" @bind-Location="input.Location"> *@
-                @*     </SampleInput> *@
-                @* } *@
-                @* *@
-                @* <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div> *@
-                @* *@
-                @* <div class="mb-2"> *@
-                @*     <button type="button" class="btn btn-lg w-100 text-white" *@
-                @*             style="background-color: var(--custom-primary-color);" @onclick="NewDnaTray"> *@
-                @*         DNAトレイID追加 *@
-                @*     </button> *@
-                @* </div> *@
-                @* *@
-                @* <FullSizeInput Label="処理検体数" Type="info" Info="@_operator.NumberOfSamples.ToString()"/> *@
-                @* *@
-                @* <div class="d-flex flex-wrap flex-row align-items-center justify-content-between"> *@
-                @* *@
-                @*     <HalfSizeInput Label="通常" @bind-Value="_operator.NumberOfNormalSamples" *@
-                @*                    ValueChangedListener="ValidateInputs"/> *@
-                @*     <HalfSizeInput Label="分割後残検体" @bind-Value="_operator.NumberOfRemainSamples" *@
-                @*                    ValueChangedListener="ValidateInputs"/> *@
-                @*     <HalfSizeInput Label="再採便" @bind-Value="_operator.NumberOfRedoSamples" *@
-                @*                    ValueChangedListener="ValidateInputs"/> *@
-                @*     <HalfSizeInput Label="再採便分割後残検体" @bind-Value="_operator.NumberOfRedoRemainSamples" *@
-                @*                    ValueChangedListener="ValidateInputs"/> *@
-                @*     <HalfSizeInput Label="NC" Type="info" Info="@_operator.NumberOfNCSamples.ToString()"/> *@
-                @*     <HalfSizeInput Label="ダミー" Type="info" Info="@_operator.NumberOfDummySamples.ToString()"/> *@
-                @* *@
-                @* </div> *@
-
+                
             </div>
 
             @if (!_reportService.IsValid && _reportService.ErrorMessages != null)
@@ -79,14 +46,14 @@
                 </div>
             }
 
-            <button class="btn btn-lg w-100 text-white mb-3"
-                    style="background-color: var(--custom-primary-color);" type="button" @onclick="PreviousPage">
-                戻る
-            </button>
-
             <button disabled="@(!_reportService.IsValid)" class="btn btn-lg w-100 text-white"
                     style="background-color: var(--custom-primary-color);" type="button" @onclick="HandleValidSubmit">
                 開始
+            </button>
+
+            <button class="btn btn-lg w-100 text-white mt-2"
+                    style="background-color: var(--custom-primary-color);" type="button" @onclick="PreviousPage">
+                戻る
             </button>
 
         </form>
