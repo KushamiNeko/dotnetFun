@@ -1,0 +1,271 @@
+@page "/step"
+
+@inject IJSRuntime _jsRuntime
+@inject NavigationManager _navigationManager
+
+@using BlazorAppHttps.Data
+@inject IProtocolService _protocolService
+@inject IReportService _reportService
+
+@if (_steps != null)
+{
+    @if (_stepId < 0)
+    {
+        <div class="page-container my-0">
+
+            <div class="container-fluid p-0 m-0 d-flex flex-column align-items-center">
+
+                <div class="px-5 d-flex align-items-center" style="min-height: 600px;">
+
+
+                    <div class="py-4 py-md-4 d-flex flex-column align-items-center">
+                        <h1 class="fw-bolder page-title mb-3 lh-sm text-white user-select-none" style="opacity: var(--custom-text-alpha-a);">
+                            @_reportService.Protocol.Title
+                        </h1>
+
+                        <div>
+
+                            <ol class="mb-2">
+                                @foreach (var step in _steps)
+                                {
+                                    <li class="lh-lg m-0 text-white user-select-none page-description"
+                                        style="opacity: var(--custom-text-alpha-b);">
+                                        @step.Title
+                                    </li>
+                                }
+                            </ol>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <div class="page-container my-0">
+
+            <div class="container-fluid p-0 m-0">
+
+                <div class="d-flex flex-wrap flex-row p-0 m-0 justify-content-center" style="min-height: 600px;">
+
+                    <div class="d-flex col-md-6 px-0 align-middle justify-content-center">
+
+                        <div class="d-flex justify-content-center align-items-center w-75">
+
+                            <div class="py-4 py-md-4">
+
+                                <div class="mb-2">
+                                    <p class="fw-bolder page-title text-white lh-sm m-0 user-select-none"
+                                       style="opacity: var(--custom-text-alpha-a);">
+                                        @_steps[_stepId].Title@_steps[_stepId].Subtitle
+                                    </p>
+                                </div>
+
+                                <ul>
+                                    @foreach (var description in _steps[_stepId].Descriptions)
+                                    {
+                                        <li class="text-white lh-lg m-0 user-select-none page-description"
+                                            style="opacity: var(--custom-text-alpha-b); white-space: pre-wrap;">
+                                            @description
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex flex-column col-md-6 justify-content-center align-items-center m-0 p-0 p-md-4"
+                         style="background-color: black;">
+
+                        <VideoPlayer @ref="_videoPlayer" Source="@(_videoSrc)"></VideoPlayer>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    }
+    <div class="progress w-100 rounded-0 border-0"
+         style="height: 3.5rem; background-color: var(--custom-bg-color-secondary);">
+
+        <div class="progress-bar fs-6 user-select-none"
+             style="width: @_progress%; background-color: var(--custom-secondary-color);" role="progressbar"
+             aria-valuenow="@_progress" aria-valuemin="0" aria-valuemax="100">
+            @_progress%
+        </div>
+    </div>
+
+    <DelayButtonV2 @ref="_delayButton" Title="次へ" DelaySeconds="2" ActivatedCallBack="NextPage">
+    </DelayButtonV2>
+}
+else
+{
+    <div class="d-flex justify-content-center m-5">
+        <div class="spinner-border text-white" style="width: 3.5rem; height: 3.5rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+
+@code {
+
+    private string _videoSrc;
+
+    private List<ProtocolStepModel> _steps;
+
+    private DotNetObjectReference<ProtocolStepPage> _objectReference;
+
+    private int _progress = 0;
+
+    private int _stepId = -1;
+        @* private int StepId = 0; *@
+
+    private VideoPlayer _videoPlayer;
+
+    private DelayButtonV2 _delayButton;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (_reportService.Protocol == null || _reportService.ProtocolStart == default)
+        {
+            _navigationManager.NavigateTo($"/");
+        }
+        else
+        {
+            _steps = await _protocolService.GetProtocolStepsAsync(_reportService.Protocol);
+
+            if (_steps != null && _stepId < 0)
+            {
+                if (!string.IsNullOrEmpty(_reportService.Protocol.AudioUrl))
+                {
+                    await _jsRuntime.InvokeVoidAsync("playAudio", _reportService.Protocol.AudioUrl);
+                }
+            }
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _objectReference = DotNetObjectReference.Create(this);
+            await _jsRuntime.InvokeVoidAsync("addKeyDownListener", _objectReference);
+            await _jsRuntime.InvokeVoidAsync("addKeyUpListener", _objectReference);
+        }
+    }
+
+    [JSInvokable]
+    public async Task KeyDownHandler(string key)
+    {
+        switch (key)
+        {
+            case "ArrowLeft":
+            case "ArrowUp":
+                if (_videoPlayer != null)
+                {
+                    await _videoPlayer.KeyboardDown();
+                }
+                break;
+
+            case "ArrowRight":
+            case "ArrowDown":
+                if (_delayButton != null)
+                {
+                    await _delayButton.KeyboardDown();
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    [JSInvokable]
+    public async Task KeyUpHandler(string key)
+    {
+        switch (key)
+        {
+            case "ArrowLeft":
+            case "ArrowUp":
+                if (_videoPlayer != null)
+                {
+                    await _videoPlayer.KeyboardUp();
+                }
+                break;
+
+            case "ArrowRight":
+            case "ArrowDown":
+                if (_delayButton != null)
+                {
+                    await _delayButton.KeyboardUp();
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private async Task PreviousPage()
+    {
+        int newId = _stepId - 1;
+        if (newId >= -1)
+        {
+            _stepId = newId;
+            await _jsRuntime.InvokeVoidAsync("stopAudio", null);
+
+            if (_stepId >= 0)
+            {
+                _reportService.UndoStep(_steps[_stepId].Title);
+
+                _videoSrc = _steps[_stepId].VideoUrl;
+                _progress = (int) (((double) (_stepId + 1) / (double) _steps.Count) * 100.0);
+                await _jsRuntime.InvokeVoidAsync("playAudio", _steps[_stepId].AudioUrl);
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    private async Task NextPage()
+    {
+        if (_stepId >= 0)
+        {
+            _reportService.LogStep(_steps[_stepId].Title);
+        }
+
+        int newId = _stepId + 1;
+        if (newId <= _steps.Count - 1)
+        {
+            _stepId = newId;
+
+            if (_stepId >= 0)
+            {
+                await _jsRuntime.InvokeVoidAsync("stopAudio", null);
+
+                _videoSrc = _steps[_stepId].VideoUrl;
+                _progress = (int) (((float) (_stepId + 1) / (float) _steps.Count) * 100.0);
+
+                await _jsRuntime.InvokeVoidAsync("playAudio", _steps[_stepId].AudioUrl);
+
+                StateHasChanged();
+
+                await _videoPlayer.LoadVideo();
+            }
+        }
+        else if (newId == _steps.Count)
+        {
+            await _jsRuntime.InvokeVoidAsync("stopAudio", null);
+
+            _reportService.ProtocolCompleted();
+            _navigationManager.NavigateTo($"/report");
+        }
+    }
+
+}

@@ -7,21 +7,16 @@ namespace BlazorAppHttps.Data
 {
     public class ReportService
     {
+        public ProtocolModel Protocol { get; init; }
 
         public Operator Operator
         {
-            get
-            {
-                return _operator;
-            }
+            get { return _operator; }
         }
 
         public Dictionary<string, DateTime> Logs
         {
-            get
-            {
-                return _logs;
-            }
+            get { return _logs; }
         }
 
         private Operator _operator = null;
@@ -48,7 +43,6 @@ namespace BlazorAppHttps.Data
             {
                 _logs[step] = DateTimeOffset.UtcNow.AddHours(9.0).DateTime;
             }
-
         }
 
         public void CompleteProtocol()

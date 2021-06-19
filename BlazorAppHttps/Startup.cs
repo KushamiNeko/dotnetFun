@@ -28,9 +28,17 @@ namespace BlazorAppHttps
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            
             // services.AddSingleton<WeatherForecastService>();
+            
+            services.AddHttpClient();
+            
+            services.AddScoped<IProtocolService, ProtocolServiceLocal>();
+            services.AddScoped<IReportService, ReportServiceLocal>();
+            
             services.AddScoped<StepService>();
             services.AddScoped<ReportService>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

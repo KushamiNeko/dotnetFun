@@ -21,7 +21,7 @@ namespace BlazorAppHttps.Data
 
         public DateTime ProtocolEnd { get; set; }
 
-        public List<DNATrayInput> DNATrayInputs { get; set; } = new();
+        public List<DnaTrayInputModel> DNATrayInputs { get; set; } = new();
 
         public int NumberOfSamples { get; set; } = 0;
 
@@ -140,16 +140,16 @@ namespace BlazorAppHttps.Data
 
             float ntraySamples = 0;
 
-            foreach (DNATrayInput input in DNATrayInputs)
+            foreach (var input in DNATrayInputs)
             {
-                if (String.IsNullOrEmpty(input.TrayID?.Trim()))
+                if (String.IsNullOrEmpty(input.TrayId?.Trim()))
                 {
                     InvalidMessage("DNAトレイIDを入力してください");
                 }
                 else
                 {
 
-                    IfInvalidMessage(!regexTrayID.IsMatch(input.TrayID), "無効なDNAトレイIDです");
+                    IfInvalidMessage(!regexTrayID.IsMatch(input.TrayId), "無効なDNAトレイIDです");
                 }
 
                 if (String.IsNullOrEmpty(input.Location?.Trim()) || !regexCheck.IsMatch(input.Location))

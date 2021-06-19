@@ -1,74 +1,86 @@
 @page "/report"
 
-@inject IJSRuntime js
-@inject NavigationManager NavigationManager
+@inject IJSRuntime _jsRuntime
+@inject NavigationManager _navigationManager
 @using BlazorAppHttps.Data
-@inject ReportService reportService
+@inject IReportService _reportService
 
 <div class="container d-flex justify-content-center my-5">
 
     <div class="form-container p-4 mx-3 mx-sm-0">
 
         <h1 class="h2 mb-3 fw-bold w-100 text-center text-white" style="opacity: var(--custom-text-alpha-a);">作業日誌</h1>
+        
+        <h1 class="h4 mb-3 w-100 text-center text-white" style="opacity: var(--custom-text-alpha-a);">@_reportService.Protocol.Title</h1>
 
         <form>
 
             <div class="text-white mb-2">
 
-                <FullSizeInput Label="担当者" Type="info" Info="@reportService.Operator.Name.Trim()" />
+                <FullSizeInput Label="担当者" Type="info" Info="@_reportService.OperatorName.Trim()"/>
                 <FullSizeInput Label="開始時間" Type="info"
-                    Info="@reportService.Operator.ProtocolStart.ToString(reportService.Operator.TimeFormat)" />
+                               Info="@_reportService.ProtocolStart.ToString(_reportService.TimeFormat)"/>
                 <FullSizeInput Label="終了時刻" Type="info"
-                    Info="@reportService.Operator.ProtocolEnd.ToString(reportService.Operator.TimeFormat)" />
+                               Info="@_reportService.ProtocolEnd.ToString(_reportService.TimeFormat)"/>
 
                 <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
 
-                @foreach (var input in reportService.Operator.DNATrayInputs)
+                @if (_reportService.Protocol.LogType == "Simple")
                 {
-                    <SampleInput UID="@input.UID" Type="info" @bind-TrayID="input.TrayID" @bind-Location="input.Location">
-                    </SampleInput>
+                    <SimpleInput Type="info" Title="処理検体数" Info="@_reportService.Inputs.KeyValue"></SimpleInput>
+                }
+                else if (_reportService.Protocol.LogType == "DnaTray")
+                {
+                    <DnaTrayInput Type="info" Info="@_reportService.Inputs.KeyValue"></DnaTrayInput>
                 }
 
+                @* @foreach (var input in _reportService.Operator.DNATrayInputs) *@
+                @* { *@
+                @*     <SampleInput Uid="@input.Uid" Type="info" @bind-TrayID="input.TrayID" @bind-Location="input.Location"> *@
+                @*     </SampleInput> *@
+                @* } *@
+                @* *@
+                @* <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div> *@
+                @* *@
+                @* <FullSizeInput Label="処理検体数" Type="info" Info="@reportService.Operator.NumberOfSamples.ToString()"/> *@
+                @* *@
+                @* <div class="d-flex flex-wrap flex-row align-items-center justify-content-between"> *@
+                @* *@
+                @*     <HalfSizeInput Label="通常" Type="info" *@
+                @*                    Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfNormalSamples) ? "0" : @reportService.Operator.NumberOfNormalSamples.Trim())"/> *@
+                @* *@
+                @*     <HalfSizeInput Label="分割後残検体" Type="info" *@
+                @*                    Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRemainSamples) ? "0" : @reportService.Operator.NumberOfRemainSamples.Trim())"/> *@
+                @* *@
+                @*     <HalfSizeInput Label="再採便" Type="info" *@
+                @*                    Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRedoSamples) ? "0" : @reportService.Operator.NumberOfRedoSamples.Trim())"/> *@
+                @* *@
+                @*     <HalfSizeInput Label="再採便分割後残検体" Type="info" *@
+                @*                    Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRedoRemainSamples) ? "0" : @reportService.Operator.NumberOfRedoRemainSamples.Trim())"/> *@
+                @* *@
+                @*     <HalfSizeInput Label="NC" Type="info" Info="@reportService.Operator.NumberOfNCSamples.ToString()"/> *@
+                @* *@
+                @*     <HalfSizeInput Label="ダミー" Type="info" *@
+                @*                    Info="@reportService.Operator.NumberOfDummySamples.ToString()"/> *@
+                @* *@
+                @* </div> *@
+
                 <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
 
-                <FullSizeInput Label="処理検体数" Type="info" Info="@reportService.Operator.NumberOfSamples.ToString()" />
+                @* <h1 class="h4 my-3 fw-bold w-100 text-center text-white" style="opacity: var(--custom-text-alpha-a);"> *@
+                @*     @_reportService.Protocol.Title *@
+                @* </h1> *@
 
-                <div class="d-flex flex-wrap flex-row align-items-center justify-content-between">
-
-                    <HalfSizeInput Label="通常" Type="info"
-                        Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfNormalSamples)?"0":@reportService.Operator.NumberOfNormalSamples.Trim())" />
-
-                    <HalfSizeInput Label="分割後残検体" Type="info"
-                        Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRemainSamples)?"0":@reportService.Operator.NumberOfRemainSamples.Trim())" />
-
-                    <HalfSizeInput Label="再採便" Type="info"
-                        Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRedoSamples)?"0":@reportService.Operator.NumberOfRedoSamples.Trim())" />
-
-                    <HalfSizeInput Label="再採便分割後残検体" Type="info"
-                        Info="@(String.IsNullOrEmpty(reportService.Operator.NumberOfRedoRemainSamples)?"0":@reportService.Operator.NumberOfRedoRemainSamples.Trim())" />
-
-                    <HalfSizeInput Label="NC" Type="info" Info="@reportService.Operator.NumberOfNCSamples.ToString()" />
-
-                    <HalfSizeInput Label="ダミー" Type="info"
-                        Info="@reportService.Operator.NumberOfDummySamples.ToString()" />
-
-                </div>
-
-                <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
-
-                <h1 class="h4 my-3 fw-bold w-100 text-center text-white" style="opacity: var(--custom-text-alpha-a);">
-                    受付：検体処理者（3 hr）</h1>
-
-                @foreach (var pair in reportService.Logs)
+                @foreach (var pair in _reportService.Logs)
                 {
                     <FullSizeInput Label="@pair.Key" Type="info"
-                    Info="@pair.Value.ToString(reportService.Operator.TimeFormat)" />
+                                   Info="@pair.Value.ToString(_reportService.TimeFormat)"/>
                 }
 
             </div>
 
             <button class="btn btn-lg w-100 text-white" style="background-color: var(--custom-primary-color);"
-                type="button">
+                    type="button">
                 送信
             </button>
 
@@ -80,22 +92,21 @@
 
 
 @code {
+
     protected override void OnInitialized()
     {
-        if (reportService.Operator == null)
+        if (_reportService.Protocol == null || _reportService.ProtocolStart == default || _reportService.ProtocolEnd == default)
         {
-            NavigationManager.NavigateTo($"/");
+            _navigationManager.NavigateTo($"/");
         }
     }
 
-    protected async override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-
         if (firstRender)
         {
-            await js.InvokeVoidAsync("removeListeners");
+            await _jsRuntime.InvokeVoidAsync("removeListeners");
         }
-
     }
 
 }

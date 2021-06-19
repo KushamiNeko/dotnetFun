@@ -7,17 +7,18 @@ using Fun.Utilities;
 
 namespace MusicAlarm
 {
-    class Program
+    internal class Program
     {
-
         // private static readonly Random _rand = new();
-        private static int _musicCursor = 0;
-        private static readonly string[] _musics = Directory.GetFiles(Path.Join(Environment.GetEnvironmentVariable("HOME"), "Music", "playlist"));
+        private static int _musicCursor;
+
+        private static readonly string[] Musics =
+            Directory.GetFiles(Path.Join(Environment.GetEnvironmentVariable("HOME"), "Music", "playlist"));
 
         private static readonly int _loopInterval = 60;
         private static readonly int _restInterval = 60 * 60;
 
-        private static readonly List<int> _targets = new() { 23, 25, 28, 30, 53, 55, 58, 0 };
+        private static readonly List<int> Targets = new() {20, 23, 25, 28, 30, 50, 53, 55, 58, 0};
         // private static readonly List<int> _targets = new() { 27, 28, 29, 30, 57, 58, 59, 0 };
 
         // private static readonly List<int> _30minTargets = new() { 25, 27, 30, 32, 35 };
@@ -29,14 +30,12 @@ namespace MusicAlarm
         // private static readonly string _30minMusic = Path.Join(Environment.GetEnvironmentVariable("HOME"), "Music", "playlist", @"Wonki - Sunset Paradise.mp3");
         // private static readonly string _60minMusic = Path.Join(Environment.GetEnvironmentVariable("HOME"), "Music", "playlist", @"We Are One - Vexento [Vlog No Copyright Music].wav");
 
-        private static int? played = null;
+        private static int? _played;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-
-
-            int seconds = DateTime.Now.Second;
-            int diff = 60 - seconds;
+            var seconds = DateTime.Now.Second;
+            var diff = 60 - seconds;
 
             Pretty.ColorPrintln(Pretty.PaperLime300, $"{diff} seconds to start monitoring...");
             Thread.Sleep(diff * 1000);
@@ -46,16 +45,15 @@ namespace MusicAlarm
 
             while (true)
             {
+                var now = DateTime.Now;
 
-                DateTime now = DateTime.Now;
-
-                if (now.Hour < 12 && now.Hour >= 4)
+                if (now.Hour < 13 && now.Hour >= 6)
                 {
                     Pretty.ColorPrintln(Pretty.PaperLime300, $"sleep for {_restInterval} seconds");
                     Thread.Sleep(_restInterval * 1000);
                 }
 
-                int min = now.Minute;
+                var min = now.Minute;
 
                 string music;
 
@@ -69,32 +67,28 @@ namespace MusicAlarm
                 //     music = _60minMusic;
                 //     goto playing;
                 // }
-                if (_targets.Contains(min))
+                if (Targets.Contains(min))
                 {
-                    music = _musics[_musicCursor];
-                    _musicCursor = (_musicCursor + 1) % _musics.Length;
-                    goto playing;
+                    music = Musics[_musicCursor];
+                    _musicCursor = (_musicCursor + 1) % Musics.Length;
                 }
                 else
                 {
                     goto monitoring;
                 }
 
-            playing:
-                if ((played is int && played != min) || played == null)
+                // if ((_played is int && _played != min) || _played == null)
+                if (_played == null || (_played != null && _played != min))
                 {
-                    played = min;
+                    _played = min;
                     Pretty.ColorPrintln(Pretty.PaperAmber400, $"playing now: {music}");
                     Process.Start("totem", $"\"{music}\"");
                 }
 
-            monitoring:
+                monitoring:
                 Pretty.ColorPrintln(Pretty.PaperLime300, $"sleep for {_loopInterval} seconds");
                 Thread.Sleep(_loopInterval * 1000);
-                continue;
             }
-
-
         }
     }
 }

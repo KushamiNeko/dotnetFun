@@ -69,7 +69,7 @@
                 //     player.pause();
                 // }
 
-                invoker.invokeMethodAsync("keyDownHandler", event.which);
+                invoker.invokeMethodAsync("KeyDownHandler", event.key);
             }
 
             document.addEventListener("keydown", keyDownListener);
@@ -83,7 +83,7 @@
             // console.log("add global key up listener");
 
             keyUpListener = (event) => {
-                invoker.invokeMethodAsync("keyUpHandler", event.which);
+                invoker.invokeMethodAsync("KeyUpHandler", event.key);
             }
 
             document.addEventListener("keyup", keyUpListener);
