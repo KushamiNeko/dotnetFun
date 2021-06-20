@@ -43,6 +43,8 @@
                 }
 
             </div>
+            
+            <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
 
             <button class="btn btn-lg w-100 text-white" style="background-color: var(--custom-primary-color);"
                     type="button">
@@ -71,6 +73,11 @@
         if (firstRender)
         {
             await _jsRuntime.InvokeVoidAsync("removeListeners");
+            
+            if (!string.IsNullOrWhiteSpace(_reportService.Protocol.EndingAudioUrl))
+            {
+                await _jsRuntime.InvokeVoidAsync("playAudio", _reportService.Protocol.EndingAudioUrl);
+            }
         }
     }
 

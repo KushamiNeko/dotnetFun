@@ -33,7 +33,7 @@
                 }
 
                 <div class="mb-2" style="height: 5px; background-color: var(--custom-primary-color);"></div>
-                
+
             </div>
 
             @if (!_reportService.IsValid && _reportService.ErrorMessages != null)
@@ -64,7 +64,7 @@
 
 @code {
 
-    private ProtocolLogInputs _inputs;
+    private IProtocolLogInputs _inputs;
 
     protected override void OnInitialized()
     {

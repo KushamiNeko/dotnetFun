@@ -4,7 +4,9 @@ namespace BlazorAppHttps.Data
     {
         public string Title { get; set; }
 
-        public string AudioUrl { get; set; }
+        public string StartingAudioUrl { get; set; }
+        
+        public string EndingAudioUrl { get; set; }
         
         public string StepsUrl { get; set; }
 

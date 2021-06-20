@@ -9,8 +9,9 @@
 </div>
 
 <div class="w-100 mt-0 mt-md-4">
-    <DelayButtonV2 @ref="_delayButton" Title="戻る" DelaySeconds="@_delayDuration" CanceledCallBack="CanceledCallBack"
-        ActivatedCallBack="ActivatedCallBack"></DelayButtonV2>
+    <DelayButton @ref="_delayButton" Title="戻る" DelaySeconds="@_delayDuration" CanceledCallBack="CanceledCallBack"
+                 ActivatedCallBack="ActivatedCallBack">
+    </DelayButton>
 </div>
 
 <div
@@ -26,7 +27,7 @@
 
     private ElementReference _video;
 
-    private DelayButtonV2 _delayButton;
+    private DelayButton _delayButton;
 
     private bool _videoPaused = false;
 
@@ -104,4 +105,5 @@
     {
         await js.InvokeVoidAsync("backStepVideo", _video);
     }
+
 }

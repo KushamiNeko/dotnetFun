@@ -4,23 +4,35 @@
 @inject IReportService _reportService
 @inject NavigationManager _navigationManager
 
-<div class="container d-flex justify-content-center my-5">
 
-    <div class="form-container p-4 mx-3 mx-sm-0">
+@if (_protocols != null)
+{
+    <div class="container d-flex justify-content-center my-5">
 
-        <h1 class="h2 mb-4 fw-bold w-100 text-center text-white" style="opacity: var(--custom-text-alpha-a);">WEB版作業手順</h1>
+        <div class="form-container p-4 mx-3 mx-sm-0">
 
-        @foreach (var protocol in _protocols)
-        {
-            <button class="btn btn-lg w-100 text-white my-2"
-                    style="background-color: var(--custom-primary-color);" type="button" @onclick="(() => OnProtocolSelect(protocol))">
-                @protocol.Title
-            </button>
-        }
+            <h1 class="h2 mb-4 fw-bold w-100 text-center text-white" style="opacity: var(--custom-text-alpha-a);">WEB版作業手順</h1>
+
+            @foreach (var protocol in _protocols)
+            {
+                <button class="btn btn-lg w-100 text-white my-2"
+                        style="background-color: var(--custom-primary-color);" type="button" @onclick="(() => OnProtocolSelect(protocol))">
+                    @protocol.Title
+                </button>
+            }
+
+        </div>
 
     </div>
-
-</div>
+}
+else
+{
+    <div class="d-flex justify-content-center m-5">
+        <div class="spinner-border text-white" style="width: 3.5rem; height: 3.5rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
 
 @code {
     private List<ProtocolModel> _protocols;
@@ -34,10 +46,10 @@
     private async Task OnProtocolSelect(ProtocolModel protocol)
     {
         await _protocolService.GetProtocolStepsAsync(protocol);
-        
+
         _reportService.Protocol = protocol;
         _reportService.ProtocolBegin();
-        
+
         _navigationManager.NavigateTo($"/log");
     }
 

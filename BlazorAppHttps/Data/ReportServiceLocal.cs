@@ -17,7 +17,7 @@ namespace BlazorAppHttps.Data
 
         public Dictionary<string, DateTime> Logs { get; private set; }
 
-        public ProtocolLogInputs Inputs { get; set; }
+        public IProtocolLogInputs Inputs { get; set; }
 
         public List<string> ErrorMessages { get; private set; } = null;
 
@@ -48,7 +48,7 @@ namespace BlazorAppHttps.Data
                 return;
             }
 
-            if (string.IsNullOrEmpty(OperatorName))
+            if (string.IsNullOrWhiteSpace(OperatorName))
             {
                 ErrorMessages.Add("担当者を入力してください");
                 IsValid = false;

@@ -2,30 +2,28 @@
 
     @if (Type == "info")
     {
-        <FullSizeInput Label="DNAトレイID" Type="info" Info="@_trayId" />
-        <FullSizeInput Label="位置情報" Type="info" Info="@_location" />
+        <FullSizeInput Label="DNAトレイID" Type="info" Info="@_trayId"/>
+        <FullSizeInput Label="位置情報" Type="info" Info="@_location"/>
     }
     else
     {
         <button type="button" class="btn btn-lg w-100 text-white mb-2"
-        style="background-color: var(--custom-primary-color);" @onclick="RemoveButtonClick">
+                style="background-color: var(--custom-primary-color);" @onclick="RemoveButtonClick">
             削除
         </button>
 
-        <FullSizeInput Label="DNAトレイID" @bind-Value="_trayId" ValueChangedListener="OnLocationValueChanged" />
-        <FullSizeInput Label="位置情報" @bind-Value="_location" ValueChangedListener="OnLocationValueChanged" />
+        <FullSizeInput Label="DNAトレイID" @bind-Value="_trayId" ValueChangedListener="OnLocationValueChanged"/>
+        <FullSizeInput Label="位置情報" @bind-Value="_location" ValueChangedListener="OnLocationValueChanged"/>
     }
 
 </div>
 
 @code {
+
     private string _trayId
     {
         get => TrayId;
-        set
-        {
-            TrayIdChanged.InvokeAsync(value);
-        }
+        set { TrayIdChanged.InvokeAsync(value); }
     }
 
     private string _location
@@ -75,4 +73,5 @@
             await LocationValueChangedListener.InvokeAsync(null);
         }
     }
+
 }

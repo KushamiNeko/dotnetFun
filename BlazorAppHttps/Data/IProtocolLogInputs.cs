@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace BlazorAppHttps.Data
 {
-    public interface ProtocolLogInputs
+    public interface IProtocolLogInputs
     {
         public Dictionary<string, string> KeyValue { get; }
 

@@ -101,8 +101,8 @@
         </div>
     </div>
 
-    <DelayButtonV2 @ref="_delayButton" Title="次へ" DelaySeconds="2" ActivatedCallBack="NextPage">
-    </DelayButtonV2>
+    <DelayButton @ref="_delayButton" Title="次へ" DelaySeconds="2" ActivatedCallBack="NextPage">
+    </DelayButton>
 }
 else
 {
@@ -124,10 +124,10 @@ else
     private int _progress = 0;
 
     private int _stepId = -1;
-        
+
     private VideoPlayer _videoPlayer;
 
-    private DelayButtonV2 _delayButton;
+    private DelayButton _delayButton;
 
     protected override async Task OnInitializedAsync()
     {
@@ -141,9 +141,9 @@ else
 
             if (_steps != null && _stepId < 0)
             {
-                if (!string.IsNullOrEmpty(_reportService.Protocol.AudioUrl))
+                if (!string.IsNullOrWhiteSpace(_reportService.Protocol.StartingAudioUrl))
                 {
-                    await _jsRuntime.InvokeVoidAsync("playAudio", _reportService.Protocol.AudioUrl);
+                    await _jsRuntime.InvokeVoidAsync("playAudio", _reportService.Protocol.StartingAudioUrl);
                 }
             }
         }
@@ -211,17 +211,17 @@ else
         }
     }
 
-    private async Task RefreshPage()
+    private async Task ChangePage()
     {
         if (_stepId >= 0)
         {
             await _jsRuntime.InvokeVoidAsync("stopAudio", null);
 
-            _videoSrc = string.IsNullOrEmpty(_steps[_stepId].VideoUrl) ? "" :_steps[_stepId].VideoUrl;
-                
+            _videoSrc = string.IsNullOrWhiteSpace(_steps[_stepId].VideoUrl) ? "" : _steps[_stepId].VideoUrl;
+
             _progress = (int) (((double) (_stepId + 1) / (double) _steps.Count) * 100.0);
 
-            if (!string.IsNullOrEmpty(_steps[_stepId].AudioUrl))
+            if (!string.IsNullOrWhiteSpace(_steps[_stepId].AudioUrl))
             {
                 await _jsRuntime.InvokeVoidAsync("playAudio", _steps[_stepId].AudioUrl);
             }
@@ -238,7 +238,7 @@ else
         if (newId >= -1)
         {
             _stepId = newId;
-            await RefreshPage();
+            await ChangePage();
         }
     }
 
@@ -253,7 +253,7 @@ else
         if (newId <= _steps.Count - 1)
         {
             _stepId = newId;
-            await RefreshPage();
+            await ChangePage();
         }
         else if (newId == _steps.Count)
         {

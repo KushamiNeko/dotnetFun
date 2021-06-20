@@ -17,7 +17,7 @@ namespace BlazorAppHttps.Data
 
         public Dictionary<string, DateTime> Logs { get; }
 
-        public ProtocolLogInputs Inputs { get; set; }
+        public IProtocolLogInputs Inputs { get; set; }
 
         public List<string> ErrorMessages { get; }
 
