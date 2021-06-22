@@ -15,6 +15,7 @@
     <base href="~/" />
 
     @* <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" /> *@
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
@@ -61,14 +62,7 @@
                 return;
             }
 
-            // console.log("add global key down listener");
-
-
             keyDownListener = (event) => {
-                // if (player !== null) {
-                //     player.pause();
-                // }
-
                 invoker.invokeMethodAsync("KeyDownHandler", event.key);
             }
 
@@ -80,8 +74,6 @@
                 return;
             }
 
-            // console.log("add global key up listener");
-
             keyUpListener = (event) => {
                 invoker.invokeMethodAsync("KeyUpHandler", event.key);
             }
@@ -91,12 +83,12 @@
 
         window.removeListeners = () => {
             if (keyDownListener !== null) {
-                // console.log("remove global key down listener");
+                
                 document.removeEventListener("keydown", keyDownListener);
             }
 
             if (keyUpListener !== null) {
-                // console.log("remove global key up listener");
+                
                 document.removeEventListener("keyup", keyUpListener);
             }
 
@@ -105,8 +97,7 @@
         }
 
         window.playAudio = (src) => {
-            // console.log(src);
-
+            
             player = new Audio(src);
             player.play();
         }
@@ -118,31 +109,27 @@
         }
 
         window.loadVideo = (media) => {
-            // console.log("load");
-
+           
             media.load();
         }
 
         window.playVideo = (media) => {
-            // console.log("play");
+            
             media.play();
         }
 
         window.stopVideo = (media) => {
-            // console.log("stop");
-
+            
             media.pause();
         }
 
         window.restartVideo = (media) => {
-            // console.log("restart");
-
+            
             media.currentTime = 0;
         }
 
         window.backStepVideo = (media) => {
-            // console.log("backstep");
-
+            
             const step = 3;
 
             if (media.currentTime <= step) {
@@ -153,8 +140,7 @@
         }
 
         window.frontStepVideo = (media) => {
-            // console.log("frontstep");
-
+            
             const step = 3;
 
             if (media.currentTime > media.duration - step) {

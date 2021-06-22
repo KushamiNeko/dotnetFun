@@ -415,16 +415,16 @@ else
                             return;
                         }
 
-    // int s = (startRow - 97) * 12 + startCol;
-    // int e = (endRow - 97) * 12 + endCol;
-    //
-    // if (e < s)
-    // {
-    //     InvalidMessage("無効な位置情報です");
-    //     return;
-    // }
+                        // int s = (startRow - 97) * 12 + startCol;
+                        // int e = (endRow - 97) * 12 + endCol;
+                        //
+                        // if (e < s)
+                        // {
+                        //     InvalidMessage("無効な位置情報です");
+                        //     return;
+                        // }
 
-    // numberOfTraySamples += e - s + 1;
+                        // numberOfTraySamples += e - s + 1;
 
                         int s = (startCol * 1000) + (startRow - 97);
                         int e = (endCol * 1000) + (endRow - 97);
@@ -489,7 +489,7 @@ else
             if ((numberOfTraySamples + 1) % 8 == 0)
             {
                 
-    // _numberOfSamples = (int) (numberOfTraySamples + 1);
+            // _numberOfSamples = (int) (numberOfTraySamples + 1);
                 _numberOfDummySamples = 0;
 
                 _numberOfDex1Column = (numberOfTraySamples + 1) / 8;
@@ -497,8 +497,8 @@ else
             else
             {
                 
-    // _numberOfSamples = (int) ((numberOfTraySamples + 1) / 8) * 8 + 8;
-    // _numberOfDummySamples = _numberOfSamples - ((int) numberOfTraySamples + 1);
+            // _numberOfSamples = (int) ((numberOfTraySamples + 1) / 8) * 8 + 8;
+            // _numberOfDummySamples = _numberOfSamples - ((int) numberOfTraySamples + 1);
 
                 int totalNumberOfSamples = (int) (((double) numberOfTraySamples + 1) / 8) * 8 + 8;
                 _numberOfDummySamples = totalNumberOfSamples - (numberOfTraySamples + 1);

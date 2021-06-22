@@ -5,8 +5,6 @@ namespace BlazorAppHttps.Data
 {
     public class ReportServiceLocal : IReportService
     {
-        // public string TimeFormat => "yyyy/MM/dd HH:mm:ss";
-
         public ProtocolModel Protocol { get; set; } = null;
 
         public string OperatorName { get; set; } = null;
