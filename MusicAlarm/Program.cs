@@ -18,7 +18,7 @@ namespace MusicAlarm
         private static readonly int _loopInterval = 60;
         private static readonly int _restInterval = 60 * 60;
 
-        private static readonly List<int> Targets = new() {20, 23, 25, 28, 30, 50, 53, 55, 58, 0};
+        private static readonly List<int> Targets = new() { 20, 23, 25, 28, 30, 35, 50, 53, 55, 58, 0, 5 };
         // private static readonly List<int> _targets = new() { 27, 28, 29, 30, 57, 58, 59, 0 };
 
         // private static readonly List<int> _30minTargets = new() { 25, 27, 30, 32, 35 };
@@ -67,6 +67,7 @@ namespace MusicAlarm
                 //     music = _60minMusic;
                 //     goto playing;
                 // }
+
                 if (Targets.Contains(min))
                 {
                     music = Musics[_musicCursor];
@@ -85,7 +86,7 @@ namespace MusicAlarm
                     Process.Start("totem", $"\"{music}\"");
                 }
 
-                monitoring:
+            monitoring:
                 Pretty.ColorPrintln(Pretty.PaperLime300, $"sleep for {_loopInterval} seconds");
                 Thread.Sleep(_loopInterval * 1000);
             }

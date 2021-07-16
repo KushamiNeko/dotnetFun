@@ -2,13 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch TryingAzure",
+            "name": ".NET Core Launch TradingReport",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build TryingAzure",
-            "program": "${workspaceFolder}/TryingAzure/bin/Debug/net5.0/TryingAzure.dll",
+            "preLaunchTask": "build TradingReport",
+            "program": "${workspaceFolder}/TradingReport/bin/Debug/net5.0/TradingReport.dll",
             "args": [],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/TradingReport",
             "stopAtEntry": false,
             "console": "internalConsole"
         },
