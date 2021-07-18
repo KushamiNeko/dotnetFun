@@ -1,4 +1,6 @@
 ﻿using System;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 namespace TryingAzure
 {
@@ -51,7 +53,7 @@ namespace TryingAzure
 
             var client = new BlobServiceClient(_connectionString);
 
-            var properties = new BlobServiceProperties();
+            // var properties = new BlobServiceProperties();
 
             var response = client.GetProperties();
             var properties = response.Value;
@@ -59,11 +61,11 @@ namespace TryingAzure
 
             var response2 = client.SetProperties(properties);
 
-            Console.WriteLine(response2.Status);
-            Console.WriteLine(response.Value.DefaultServiceVersion);
+            // Console.WriteLine(response2.Status);
+            // Console.WriteLine(response.Value.DefaultServiceVersion);
 
-            Console.WriteLine(response.Status);
-            Console.WriteLine(response.ToString());
+            // Console.WriteLine(response.Status);
+            // Console.WriteLine(response.ToString());
 
             // old code reference
 
