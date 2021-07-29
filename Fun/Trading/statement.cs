@@ -4,9 +4,14 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Fun.Trading
 {
+    public enum Objective
+    {
+        Trading, Investing
+    }
 
     public enum TradeDirection
     {
@@ -41,7 +46,8 @@ namespace Fun.Trading
         // the objective of the statement
         // eg.
         // trading or investing
-        public string Objective { get; init; }
+        // public string Objective { get; init; }
+        public Objective Objective { get; init; }
 
         /*
             list all accounts used for specified objective
@@ -77,9 +83,9 @@ namespace Fun.Trading
             _datetimePattern.Replace("{{GROUP}}", "Close")
             );
 
-        public static MonthlyStatement Parse(string file)
+        public static async Task<MonthlyStatement> ParseFileAsync(string file)
         {
-            var statement = File.ReadAllText(file);
+            var statement = await File.ReadAllTextAsync(file);
 
             var regex = new Regex(_objectivePattern, RegexOptions.Multiline);
             var matches = regex.Matches(statement);
@@ -89,10 +95,17 @@ namespace Fun.Trading
                 throw new ArgumentException("the statement contains no objective information");
             }
 
-            string objective;
+            // string objective;
+            Objective objective;
             if (matches[0].Groups["Objective"].Success)
             {
-                objective = matches[0].Groups["Objective"].Value;
+                // objective = matches[0].Groups["Objective"].Value;
+                objective = matches[0].Groups["Objective"].Value switch
+                {
+                    "trading" => Objective.Trading,
+                    "investing" => Objective.Investing,
+                    _ => throw new ArgumentException("unknown objective")
+                };
             }
             else
             {

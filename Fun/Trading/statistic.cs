@@ -22,11 +22,25 @@ namespace Fun.Trading
             {
                 if (Statements is { Count: > 0 })
                 {
-                    return Statements.SelectMany(statement => statement.Records).Where(record => record.Open >= PeriodStart && record.Close <= PeriodEnd);
+                    if (PeriodStart != default && PeriodEnd != default)
+                    {
+                        return Statements.SelectMany(statement => statement.Records).Where(record => record.Open >= PeriodStart && record.Close <= PeriodEnd);
+                    }
+                    else
+                    {
+                        return Statements.SelectMany(statement => statement.Records);
+                    }
                 }
                 else if (Records is { Count: > 0 })
                 {
-                    return Records.Where(record => record.Open >= PeriodStart && record.Close <= PeriodEnd);
+                    if (PeriodStart != default && PeriodEnd != default)
+                    {
+                        return Records.Where(record => record.Open >= PeriodStart && record.Close <= PeriodEnd);
+                    }
+                    else
+                    {
+                        return Records;
+                    }
                 }
                 else
                 {
