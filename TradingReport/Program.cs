@@ -19,7 +19,7 @@ namespace TradingReport
             var statistic = new TradingStatistic
             {
                 PeriodStart = new DateTimeOffset(new DateTime(2016, 09, 01)),
-                PeriodEnd = new DateTimeOffset(new DateTime(2017, 1, 5)),
+                PeriodEnd = new DateTimeOffset(new DateTime(2021, 12, 31)),
                 // PeriodStart = default,
                 // PeriodEnd = default,
                 Records = await TransactionService.ReadFromBookAsync(user: "default", title: "ZN@01"),

@@ -12,13 +12,13 @@ namespace MusicAlarm
         // private static readonly Random _rand = new();
         private static int _musicCursor;
 
-        private static readonly string[] Musics =
+        private static readonly string[] _musics =
             Directory.GetFiles(Path.Join(Environment.GetEnvironmentVariable("HOME"), "Music", "playlist"));
 
         private static readonly int _loopInterval = 60;
         private static readonly int _restInterval = 60 * 60;
 
-        private static readonly List<int> Targets = new() { 20, 23, 25, 28, 30, 35, 50, 53, 55, 58, 0, 5 };
+        private static readonly List<int> _targets = new() { 20, 23, 25, 28, 30, 35, 50, 53, 55, 58, 0, 5 };
         // private static readonly List<int> _targets = new() { 27, 28, 29, 30, 57, 58, 59, 0 };
 
         // private static readonly List<int> _30minTargets = new() { 25, 27, 30, 32, 35 };
@@ -47,7 +47,7 @@ namespace MusicAlarm
             {
                 var now = DateTime.Now;
 
-                if (now.Hour < 13 && now.Hour >= 6)
+                if (now.Hour is < 13 and >= 6)
                 {
                     Pretty.ColorPrintln(Pretty.PaperLime300, $"sleep for {_restInterval} seconds");
                     Thread.Sleep(_restInterval * 1000);
@@ -68,10 +68,10 @@ namespace MusicAlarm
                 //     goto playing;
                 // }
 
-                if (Targets.Contains(min))
+                if (_targets.Contains(min))
                 {
-                    music = Musics[_musicCursor];
-                    _musicCursor = (_musicCursor + 1) % Musics.Length;
+                    music = _musics[_musicCursor];
+                    _musicCursor = (_musicCursor + 1) % _musics.Length;
                 }
                 else
                 {
@@ -86,7 +86,7 @@ namespace MusicAlarm
                     Process.Start("totem", $"\"{music}\"");
                 }
 
-            monitoring:
+                monitoring:
                 Pretty.ColorPrintln(Pretty.PaperLime300, $"sleep for {_loopInterval} seconds");
                 Thread.Sleep(_loopInterval * 1000);
             }

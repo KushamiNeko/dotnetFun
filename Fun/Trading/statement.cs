@@ -10,17 +10,18 @@ namespace Fun.Trading
 {
     public enum Objective
     {
-        Trading, Investing
+        Trading,
+        Investing
     }
 
     public enum TradeDirection
     {
-        Long, Short
+        Long,
+        Short
     }
 
     public class AccountBalance
     {
-
         // futures, equities, crypto account
         public string AccountType { get; init; }
 
@@ -63,31 +64,32 @@ namespace Fun.Trading
         public double EndingBalance => Balances.Select(balance => balance.EndingBalance).Sum();
 
         // account percentage risk per trade
-        public double PercentageRiskPerTrage { get; init; }
+        public double PercentageRiskPerTrade { get; init; }
 
         // trading pl records
         public List<TradeRecord> Records { get; init; }
 
-        private static readonly string _objectivePattern = @"^\s*objective\s*:\s*(?<Objective>\w+)\s*$";
+        private const string ObjectivePattern = @"^\s*objective\s*:\s*(?<Objective>\w+)\s*$";
 
-        private static readonly string _accountBalancePattern = @"^\s*(?<Account>\w+)\s*balance:\s*(?<Balance>[0-9,.-]+)\s*$";
+        private const string AccountBalancePattern = @"^\s*(?<Account>\w+)\s*balance:\s*(?<Balance>[0-9,.-]+)\s*$";
 
-        private static readonly string _percentageRiskPattern = @"^\s*account percentage risk per trade\s*:\s*(?<Risk>[0-9.]+)\s*%\s*$";
+        private const string PercentageRiskPattern =
+            @"^\s*account percentage risk per trade\s*:\s*(?<Risk>[0-9.]+)\s*%\s*$";
 
-        private static readonly string _datetimePattern = @"(?<{{GROUP}}>\d{4}\s*[-]\s*\d{2}\s*[-]\s*\d{2}(?:\s*\d{2}:\d{2})*)";
+        private const string _datetimePattern = @"(?<{{GROUP}}>\d{4}\s*[-]\s*\d{2}\s*[-]\s*\d{2}(?:\s*\d{2}:\d{2})*)";
 
         private static readonly string _tradeRecordPattern =
-        String.Format(
-            @"^\s*{0}(?:\s*[-~]\s*{1})*\s*:\s*(?<PL>[0-9,.-]+)\s*(?:@\s*(?<Direction>[LS])(?<Contract>\d*))$",
-            _datetimePattern.Replace("{{GROUP}}", "Open"),
-            _datetimePattern.Replace("{{GROUP}}", "Close")
+            string.Format(
+                @"^\s*{0}(?:\s*[-~]\s*{1})*\s*:\s*(?<PL>[0-9,.-]+)\s*(?:@\s*(?<Direction>[LS])(?<Contract>\d*))$",
+                _datetimePattern.Replace("{{GROUP}}", "Open"),
+                _datetimePattern.Replace("{{GROUP}}", "Close")
             );
 
         public static async Task<MonthlyStatement> ParseFileAsync(string file)
         {
             var statement = await File.ReadAllTextAsync(file);
 
-            var regex = new Regex(_objectivePattern, RegexOptions.Multiline);
+            var regex = new Regex(ObjectivePattern, RegexOptions.Multiline);
             var matches = regex.Matches(statement);
 
             if (matches is not { Count: 1 })
@@ -113,7 +115,7 @@ namespace Fun.Trading
             }
 
 
-            regex = new Regex(_accountBalancePattern, RegexOptions.Multiline);
+            regex = new Regex(AccountBalancePattern, RegexOptions.Multiline);
             matches = regex.Matches(statement);
 
             if (matches is not { Count: > 0 })
@@ -147,7 +149,7 @@ namespace Fun.Trading
                 }
             }
 
-            regex = new Regex(_percentageRiskPattern, RegexOptions.Multiline);
+            regex = new Regex(PercentageRiskPattern, RegexOptions.Multiline);
 
             double percentageRisk;
 
@@ -189,7 +191,8 @@ namespace Fun.Trading
                     throw new ArgumentException("invalid trade record information");
                 }
 
-                if (!DateTimeOffset.TryParseExact(groups["Open"].Value, new String[]{
+                if (!DateTimeOffset.TryParseExact(groups["Open"].Value, new String[]
+                {
                     @"yyyy-MM-dd",
                     @"yyyy-MM-dd HH:mm"
                 }, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTimeOffset open))
@@ -200,10 +203,11 @@ namespace Fun.Trading
                 DateTimeOffset close;
                 if (groups["Close"].Success && !String.IsNullOrWhiteSpace(groups["Close"].Value))
                 {
-                    if (!DateTimeOffset.TryParseExact(groups["Close"].Value, new String[]{
-                    @"yyyy-MM-dd",
-                    @"yyyy-MM-dd HH:mm"
-                }, CultureInfo.InvariantCulture, DateTimeStyles.None, out close))
+                    if (!DateTimeOffset.TryParseExact(groups["Close"].Value, new String[]
+                    {
+                        @"yyyy-MM-dd",
+                        @"yyyy-MM-dd HH:mm"
+                    }, CultureInfo.InvariantCulture, DateTimeStyles.None, out close))
                     {
                         throw new ArgumentException("invalid trade record information");
                     }
@@ -252,10 +256,9 @@ namespace Fun.Trading
             {
                 Objective = objective,
                 Balances = balances,
-                PercentageRiskPerTrage = percentageRisk,
+                PercentageRiskPerTrade = percentageRisk,
                 Records = records,
             };
         }
     }
-
 }

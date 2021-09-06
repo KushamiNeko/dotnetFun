@@ -4,10 +4,8 @@ using System.Linq;
 
 namespace Fun.Trading
 {
-
     public class TradingStatistic
     {
-
         public DateTimeOffset PeriodStart { get; init; }
 
         public DateTimeOffset PeriodEnd { get; init; }
@@ -24,7 +22,8 @@ namespace Fun.Trading
                 {
                     if (PeriodStart != default && PeriodEnd != default)
                     {
-                        return Statements.SelectMany(statement => statement.Records).Where(record => record.Open >= PeriodStart && record.Close <= PeriodEnd);
+                        return Statements.SelectMany(statement => statement.Records).Where(record =>
+                            record.Open >= PeriodStart && record.Close <= PeriodEnd);
                     }
                     else
                     {
@@ -46,20 +45,26 @@ namespace Fun.Trading
                 {
                     throw new ArgumentException("empty statements and records");
                 }
-
             }
         }
+
         private IEnumerable<TradeRecord> _winners => _all.Where(record => record.PL > 0);
         private IEnumerable<TradeRecord> _losers => _all.Where(record => record.PL < 0);
 
         private IEnumerable<TradeRecord> _long => _all.Where(record => record.Direction == TradeDirection.Long);
         private IEnumerable<TradeRecord> _short => _all.Where(record => record.Direction == TradeDirection.Short);
 
-        private IEnumerable<TradeRecord> _longWinners => _all.Where(record => record.Direction == TradeDirection.Long && record.PL > 0);
-        private IEnumerable<TradeRecord> _longLosers => _all.Where(record => record.Direction == TradeDirection.Long && record.PL < 0);
+        private IEnumerable<TradeRecord> _longWinners =>
+            _all.Where(record => record.Direction == TradeDirection.Long && record.PL > 0);
 
-        private IEnumerable<TradeRecord> _shortWinners => _all.Where(record => record.Direction == TradeDirection.Short && record.PL > 0);
-        private IEnumerable<TradeRecord> _shortLosers => _all.Where(record => record.Direction == TradeDirection.Short && record.PL < 0);
+        private IEnumerable<TradeRecord> _longLosers =>
+            _all.Where(record => record.Direction == TradeDirection.Long && record.PL < 0);
+
+        private IEnumerable<TradeRecord> _shortWinners =>
+            _all.Where(record => record.Direction == TradeDirection.Short && record.PL > 0);
+
+        private IEnumerable<TradeRecord> _shortLosers =>
+            _all.Where(record => record.Direction == TradeDirection.Short && record.PL < 0);
 
         public int NumberOfTrade => _all.Count();
         public int NumberOfLongTrade => _long.Count();
@@ -73,24 +78,26 @@ namespace Fun.Trading
         {
             get
             {
-                var winnersPL = _winners.Select(record => record.PL);
-                return winnersPL.Count() > 0 ? winnersPL.Average() : Double.NaN;
+                var winnersPl = _winners.Select(record => record.PL).ToList();
+                return winnersPl.Any() ? winnersPl.Average() : Double.NaN;
             }
         }
+
         public double WinPlAvgL
         {
             get
             {
-                var winnersPL = _longWinners.Select(record => record.PL);
-                return winnersPL.Count() > 0 ? winnersPL.Average() : Double.NaN;
+                var winnersPl = _longWinners.Select(record => record.PL).ToList();
+                return winnersPl.Any() ? winnersPl.Average() : Double.NaN;
             }
         }
+
         public double WinPlAvgS
         {
             get
             {
-                var winnersPL = _shortWinners.Select(record => record.PL);
-                return winnersPL.Count() > 0 ? winnersPL.Average() : Double.NaN;
+                var winnersPl = _shortWinners.Select(record => record.PL).ToList();
+                return winnersPl.Any() ? winnersPl.Average() : Double.NaN;
             }
         }
 
@@ -106,24 +113,26 @@ namespace Fun.Trading
         {
             get
             {
-                var losersPL = _losers.Select(record => record.PL);
-                return losersPL.Count() > 0 ? losersPL.Average() : Double.NaN;
+                var losersPl = _losers.Select(record => record.PL).ToList();
+                return losersPl.Any() ? losersPl.Average() : Double.NaN;
             }
         }
+
         public double LossPlAvgL
         {
             get
             {
-                var losersPL = _longLosers.Select(record => record.PL);
-                return losersPL.Count() > 0 ? losersPL.Average() : Double.NaN;
+                var losersPl = _longLosers.Select(record => record.PL).ToList();
+                return losersPl.Any() ? losersPl.Average() : Double.NaN;
             }
         }
+
         public double LossPlAvgS
         {
             get
             {
-                var losersPL = _shortLosers.Select(record => record.PL);
-                return losersPL.Count() > 0 ? losersPL.Average() : Double.NaN;
+                var losersPl = _shortLosers.Select(record => record.PL).ToList();
+                return losersPl.Any() ? losersPl.Average() : Double.NaN;
             }
         }
 
@@ -148,67 +157,87 @@ namespace Fun.Trading
         {
             get
             {
-                var winnersHours = _winners.Select(record => record.Close.Subtract(record.Open).TotalMinutes);
-                return winnersHours.Count() > 0 ? winnersHours.Average() : Double.NaN;
+                var winnersHours = _winners.Select(record => record.Close.Subtract(record.Open).TotalMinutes).ToList();
+                return winnersHours.Any() ? winnersHours.Average() : Double.NaN;
             }
         }
+
         public double WinHoldAvgL
         {
             get
             {
-                var winnersHours = _longWinners.Select(record => record.Close.Subtract(record.Open).TotalMinutes);
-                return winnersHours.Count() > 0 ? winnersHours.Average() : Double.NaN;
+                var winnersHours = _longWinners.Select(record => record.Close.Subtract(record.Open).TotalMinutes).ToList();
+                return winnersHours.Any() ? winnersHours.Average() : Double.NaN;
             }
         }
+
         public double WinHoldAvgS
         {
             get
             {
-                var winnersHours = _shortWinners.Select(record => record.Close.Subtract(record.Open).TotalMinutes);
-                return winnersHours.Count() > 0 ? winnersHours.Average() : Double.NaN;
+                var winnersHours = _shortWinners.Select(record => record.Close.Subtract(record.Open).TotalMinutes).ToList();
+                return winnersHours.Any() ? winnersHours.Average() : Double.NaN;
             }
         }
 
         public double WinHoldMax => _winners.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Max();
-        public double WinHoldMaxL => _longWinners.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Max();
-        public double WinHoldMaxS => _shortWinners.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Max();
+
+        public double WinHoldMaxL =>
+            _longWinners.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Max();
+
+        public double WinHoldMaxS =>
+            _shortWinners.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Max();
 
         public double WinHoldMin => _winners.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Min();
-        public double WinHoldMinL => _longWinners.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Min();
-        public double WinHoldMinS => _shortWinners.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Min();
+
+        public double WinHoldMinL =>
+            _longWinners.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Min();
+
+        public double WinHoldMinS =>
+            _shortWinners.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Min();
 
         public double LossHoldAvg
         {
             get
             {
-                var losersHours = _losers.Select(record => record.Close.Subtract(record.Open).TotalMinutes);
-                return losersHours.Count() > 0 ? losersHours.Average() : Double.NaN;
+                var losersHours = _losers.Select(record => record.Close.Subtract(record.Open).TotalMinutes).ToList();
+                return losersHours.Any() ? losersHours.Average() : Double.NaN;
             }
         }
+
         public double LossHoldAvgL
         {
             get
             {
-                var losersHours = _longLosers.Select(record => record.Close.Subtract(record.Open).TotalMinutes);
-                return losersHours.Count() > 0 ? losersHours.Average() : Double.NaN;
+                var losersHours = _longLosers.Select(record => record.Close.Subtract(record.Open).TotalMinutes).ToList();
+                return losersHours.Any() ? losersHours.Average() : Double.NaN;
             }
         }
+
         public double LossHoldAvgS
         {
             get
             {
-                var losersHours = _shortLosers.Select(record => record.Close.Subtract(record.Open).TotalMinutes);
-                return losersHours.Count() > 0 ? losersHours.Average() : Double.NaN;
+                var losersHours = _shortLosers.Select(record => record.Close.Subtract(record.Open).TotalMinutes).ToList();
+                return losersHours.Any() ? losersHours.Average() : Double.NaN;
             }
         }
 
         public double LossHoldMax => _losers.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Max();
-        public double LossHoldMaxL => _longLosers.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Max();
-        public double LossHoldMaxS => _shortLosers.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Max();
+
+        public double LossHoldMaxL =>
+            _longLosers.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Max();
+
+        public double LossHoldMaxS =>
+            _shortLosers.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Max();
 
         public double LossHoldMin => _losers.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Min();
-        public double LossHoldMinL => _longLosers.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Min();
-        public double LossHoldMinS => _shortLosers.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Min();
+
+        public double LossHoldMinL =>
+            _longLosers.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Min();
+
+        public double LossHoldMinS =>
+            _shortLosers.Select(record => record.Close.Subtract(record.Open).TotalMinutes).Min();
 
         public double ExpectedValue => (WinPlAvg * BattingAvg) + (LossPlAvg * (1.0 - BattingAvg));
         public double ExpectedValueL => (WinPlAvgL * BattingAvgL) + (LossPlAvgL * (1.0 - BattingAvgL));
@@ -221,7 +250,8 @@ namespace Fun.Trading
 
         public override string ToString()
         {
-            var title = GetStringRow(new List<string>{
+            var title = GetStringRow(new List<string>
+            {
                 "",
                 "N",
                 "Batting Avg.(%)",
@@ -234,7 +264,8 @@ namespace Fun.Trading
                 "Expected Value($)",
             });
 
-            var allTrade = GetStringRow(new List<string>{
+            var allTrade = GetStringRow(new List<string>
+            {
                 "All",
                 NumberOfTrade.ToString(),
                 (BattingAvg * 100.0).ToString("F"),
@@ -247,7 +278,8 @@ namespace Fun.Trading
                 ExpectedValue.ToString("C2"),
             });
 
-            var longTrade = GetStringRow(new List<string>{
+            var longTrade = GetStringRow(new List<string>
+            {
                 "Long",
                 NumberOfLongTrade.ToString(),
                 (BattingAvgL * 100.0).ToString("F"),
@@ -258,10 +290,10 @@ namespace Fun.Trading
                 // WinHoldAvgL.ToString("F"),
                 // LossHoldAvgL.ToString("F"),
                 ExpectedValueL.ToString("C2"),
-
             });
 
-            var shortTrade = GetStringRow(new List<string>{
+            var shortTrade = GetStringRow(new List<string>
+            {
                 "Short",
                 NumberOfShortTrade.ToString(),
                 (BattingAvgS * 100.0).ToString("F"),
@@ -272,7 +304,6 @@ namespace Fun.Trading
                 // WinHoldAvgS.ToString("F"),
                 // LossHoldAvgS.ToString("F"),
                 ExpectedValueS.ToString("C2"),
-
             });
 
             return $"{title}\n{allTrade}\n{longTrade}\n{shortTrade}";
@@ -285,7 +316,5 @@ namespace Fun.Trading
 
             return $"{row}\n{bottom}";
         }
-
     }
-
 }

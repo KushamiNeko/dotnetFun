@@ -22,14 +22,14 @@ namespace TryingAzure
 
             var containerClient = client.GetBlobContainerClient("");
 
-            // var prop = blobCLient.GetProperties();
+            // var prop = blobClient.GetProperties();
             // Console.WriteLine(prop.Value.ContentType);
             // Console.WriteLine(prop.Value.Metadata);
             // prop.Value.GetHashCode();
 
             // var properties = new BlobHttpHeaders { CacheControl = "max-age=3600", ContentType = prop.Value.ContentType };
 
-            // var response = blobCLient.SetHttpHeaders(properties);
+            // var response = blobClient.SetHttpHeaders(properties);
 
             foreach (BlobItem item in containerClient.GetBlobs())
             {
