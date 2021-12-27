@@ -1,24 +1,125 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using System.Security.Authentication;
+using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace TryingAzure
 {
-    class Program
+    static class Program
     {
-        private static readonly string _connectionString = "";
+        private static string _blobStorageConnectionString = "";
 
-        static void Main(string[] args)
+        // private static readonly string _cosmosConnectionString = "mongodb://localhost:27017";
+
+        static async Task Main(string[] args)
         {
+            // var sourceBlobServiceClient = new BlobServiceClient(SourceStorageConnectionString);
+            // var targetBlobServiceClient = new BlobServiceClient(TargetStorageConnectionString);
+            //
+            // var sourceContainer = sourceBlobServiceClient.GetBlobContainerClient("media-db");
+            // var targetContainer = targetBlobServiceClient.GetBlobContainerClient("media-db");
+            //
+            // var blobs = sourceContainer.GetBlobsAsync();
 
+            // await foreach (var blob in blobs)
+            // {
+            //     Console.WriteLine(blob.Name);
+            //
+            //     var sourceBlobClient = sourceContainer.GetBlobClient(blob.Name);
+            //     var response = await sourceBlobClient.DownloadStreamingAsync();
+            //     var data = response.Value.Content;
+            //
+            //     var targetBlobClient = targetContainer.GetBlobClient(blob.Name);
+            //     await targetBlobClient.UploadAsync(data, true);
+            // }
+
+            /*var sourceSettings = MongoClientSettings.FromUrl(
+                new MongoUrl(SourceCosmosConnectionString)
+            );
+
+            var targetSettings = MongoClientSettings.FromUrl(
+                new MongoUrl(TargetCosmosConnectionString)
+            );
+
+            // settings.SslSettings = new SslSettings
+            // {
+            //     EnabledSslProtocols = SslProtocols.Tls12
+            // };
+
+            var sourceClient = new MongoClient(sourceSettings);
+            var targetClient = new MongoClient(targetSettings);
+
+            var sourceDb = sourceClient.GetDatabase("protocolDb");
+            var targetDb = targetClient.GetDatabase("protocolDb");
+
+            var sourceProtocolsCollection = sourceDb.GetCollection<ProtocolModel>("protocols");
+            var targetProtocolsCollection = targetDb.GetCollection<ProtocolModel>("protocols");
+
+            var cursor = await sourceProtocolsCollection.FindAsync(FilterDefinition<ProtocolModel>.Empty);
+
+            var protocols = cursor.ToEnumerable();
+
+            foreach (var newProtocol in protocols.Select(protocol => protocol with { Id = null }))
+            {
+                // Console.WriteLine(newProtocol.ProtocolId);
+                await targetProtocolsCollection.InsertOneAsync(newProtocol);
+            }*/
         }
 
-        private void SetCacheHeader()
+        private static async Task Delete()
         {
+            const string fileName = "1.png";
 
+            var client = new BlobServiceClient(_blobStorageConnectionString);
+
+            var containerClient = client.GetBlobContainerClient("test");
+
+            var blobClient = containerClient.GetBlobClient(fileName);
+
+            var response = await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
+
+            if (response.Value is false)
+            {
+                Console.WriteLine("file does not exist");
+            }
+        }
+
+        private static async Task Upload()
+        {
+            var home = Environment.GetEnvironmentVariable("HOME");
+
+            if (home is null)
+            {
+                return;
+            }
+
+            const string fileName = "1.png";
+
+            var image = Path.Combine(home, "Pictures", fileName);
+
+            var client = new BlobServiceClient(_blobStorageConnectionString);
+
+            var containerClient = client.GetBlobContainerClient("test");
+
+            var blobClient = containerClient.GetBlobClient(Path.Combine("pic", fileName));
+
+            Console.WriteLine($"Uploading to Blob storage as blob:\n{blobClient.Uri}\n");
+
+            // Upload data from the local file
+            await blobClient.UploadAsync(image, true);
+        }
+
+        private static void SetCacheHeader()
+        {
             // var connectionString = "";
 
-            var client = new BlobServiceClient(_connectionString);
+            var client = new BlobServiceClient(_blobStorageConnectionString);
 
             var containerClient = client.GetBlobContainerClient("");
 
@@ -37,21 +138,20 @@ namespace TryingAzure
                 {
                     var blobCLient = containerClient.GetBlobClient(item.Name);
                     var prop = blobCLient.GetProperties();
-                    var properties = new BlobHttpHeaders { CacheControl = "max-age=3600", ContentType = prop.Value.ContentType };
+                    var properties = new BlobHttpHeaders
+                        { CacheControl = "max-age=3600", ContentType = prop.Value.ContentType };
                     blobCLient.SetHttpHeaders(properties);
 
                     // Console.WriteLine("\t" + item.Name);
                 }
             }
-
         }
 
-        private void SetServiceVersion()
+        private static void SetServiceVersion()
         {
-
             // var connectionString = "";
 
-            var client = new BlobServiceClient(_connectionString);
+            var client = new BlobServiceClient(_blobStorageConnectionString);
 
             // var properties = new BlobServiceProperties();
 
